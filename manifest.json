@@ -1,14 +1,14 @@
 {
   "name": "Dive into Go",
   "short_name": "Dive into Go",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/dive-into-go/",
+  "scope": "/dive-into-go/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/dive-into-go/favicon.svg",
       "sizes": "512x512"
     }
   ]

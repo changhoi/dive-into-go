@@ -1,0 +1,1 @@
+navigator.serviceWorker&&navigator.serviceWorker.register("/dive-into-go/sw.js",{scope:"/dive-into-go/"})
