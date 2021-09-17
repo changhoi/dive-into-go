@@ -2,21 +2,21 @@
 <head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="이번 장에서는, Go의 Standard Library를 활용 방법을 정리한다.
-다음 내용들을 학습한다.
-  log 패키지를 활용한 Unix 시스템 로그 활용 및 커스텀 로그 만들기  시작하기  ">
-<meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Packages">
-<meta property="og:description" content>
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://changhoi.github.io/dive-into-go/packages/">
-<title>Packages | Dive into Go</title>
+<meta name=description content="이번 장은 컴파일러에 대해 아주 조금 더 깊게 공부해보자. 일반적으로 실행 파일을 만드는 명령어로 빌드까지 완성하기 때문에, 컴파일러만의 역할을 평소에 경험하기 어렵다. 컴파일러를 통해 오브젝트 파일을 만드는 것과 기타 옵션들에 대해 다룬다.
+ 프로그램이 프로세스가 되기까지 #  ">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content>
+<meta property="og:description" content="이번 장은 컴파일러에 대해 아주 조금 더 깊게 공부해보자. 일반적으로 실행 파일을 만드는 명령어로 빌드까지 완성하기 때문에, 컴파일러만의 역할을 평소에 경험하기 어렵다. 컴파일러를 통해 오브젝트 파일을 만드는 것과 기타 옵션들에 대해 다룬다.
+ 프로그램이 프로세스가 되기까지 #  ">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/Insides/compiler/"><meta property="article:section" content="Insides">
+<meta property="article:modified_time" content="2021-09-18T02:03:04+09:00">
+<title>Compiler | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
 <script defer src=/dive-into-go/en.search.min.1091ddadf8c502be5efed02afbb59d1f86bbcece9d88a91f464f22f64d5f53ef.js integrity="sha256-EJHdrfjFAr5e/tAq+7WdH4a7zs6diKkfRk8i9k1fU+8=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
-<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/packages/index.xml title="Dive into Go">
 </head>
 <body dir=ltr>
 <input type=checkbox class="hidden toggle" id=menu-control>
@@ -39,11 +39,11 @@
 <a href=/dive-into-go/Insides/>Insides</a>
 <ul>
 <li>
-<a href=/dive-into-go/Insides/compiler/>Compiler</a></li>
+<a href=/dive-into-go/Insides/compiler/ class=active>Compiler</a></li>
 </ul>
 </li>
 <li>
-<a href=/dive-into-go/packages/ class=active>Packages</a>
+<a href=/dive-into-go/packages/>Packages</a>
 <ul>
 <li>
 <a href=/dive-into-go/packages/log/>log</a></li>
@@ -67,24 +67,29 @@ Github
 <label for=menu-control>
 <img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
 </label>
-<strong>Packages</strong>
+<strong>Compiler</strong>
 <label for=toc-control>
 <img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
 </label>
 </div>
 <aside class="hidden clearfix">
-<nav id=TableOfContents></nav>
-</aside>
-</header>
-<article class=markdown><p>이번 장에서는, Go의 Standard Library를 활용 방법을 정리한다.</p>
-<p>다음 내용들을 학습한다.</p>
+<nav id=TableOfContents>
 <ul>
 <li>
-<a href=/dive-into-go/packages/log/><code>log</code> 패키지를 활용한 Unix 시스템 로그 활용 및 커스텀 로그 만들기</a></li>
+<ul>
+<li><a href=#프로그램이-프로세스가-되기까지>프로그램이 프로세스가 되기까지</a></li>
 </ul>
-<a href=/dive-into-go/packages/log/ class=book-btn>
-시작하기
-</a>
+</li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown><p>이번 장은 컴파일러에 대해 아주 조금 더 깊게 공부해보자. 일반적으로 실행 파일을 만드는 명령어로 빌드까지 완성하기 때문에, 컴파일러만의 역할을 평소에 경험하기 어렵다. 컴파일러를 통해 오브젝트 파일을 만드는 것과 기타 옵션들에 대해 다룬다.</p>
+<hr>
+<h2 id=프로그램이-프로세스가-되기까지>
+프로그램이 프로세스가 되기까지
+<a class=anchor href=#%ed%94%84%eb%a1%9c%ea%b7%b8%eb%9e%a8%ec%9d%b4-%ed%94%84%eb%a1%9c%ec%84%b8%ec%8a%a4%ea%b0%80-%eb%90%98%ea%b8%b0%ea%b9%8c%ec%a7%80>#</a>
+</h2>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
@@ -100,7 +105,15 @@ Github
 </div>
 <aside class=book-toc>
 <div class=book-toc-content>
-<nav id=TableOfContents></nav>
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#프로그램이-프로세스가-되기까지>프로그램이 프로세스가 되기까지</a></li>
+</ul>
+</li>
+</ul>
+</nav>
 </div>
 </aside>
 </main>
