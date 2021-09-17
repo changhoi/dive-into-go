@@ -2,19 +2,21 @@
 <head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Hello World!">
-<meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Basic Types">
+<meta name=description content="이번 장에서는, Go의 Standard Library를 활용 방법을 정리한다.
+다음 내용들을 학습한다.
+  log 패키지를 활용한 Unix 시스템 로그 활용 및 커스텀 로그 만들기  ">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content>
 <meta property="og:description" content>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://changhoi.github.io/dive-into-go/docs/basic-types/">
-<title>Basic Types | Dive into Go</title>
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/packages/">
+<title>Packages | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.fd17fd8e44d98671d27a1b0544d2953093ecf4a87e25bf0b4db05a5e404d8cc2.js integrity="sha256-/Rf9jkTZhnHSehsFRNKVMJPs9Kh+Jb8LTbBaXkBNjMI=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.00564bd6d6834d9fd739722a4d5c8906ba7613cd7c4cc5cb50faca5fe2c6119b.js integrity="sha256-AFZL1taDTZ/XOXIqTVyJBrp2E818TMXLUPrKX+LGEZs=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
-<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/docs/basic-types/index.xml title="Dive into Go">
+<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/packages/index.xml title="Dive into Go">
 </head>
 <body dir=ltr>
 <input type=checkbox class="hidden toggle" id=menu-control>
@@ -34,10 +36,10 @@
 </div>
 <ul>
 <li>
-<a href=/dive-into-go/docs/basic-types/ class=active>Basic Types</a>
+<a href=/dive-into-go/packages/ class=active>Packages</a>
 <ul>
 <li>
-<a href=/dive-into-go/docs/basic-types/non-numeric/>Non Numeric</a></li>
+<a href=/dive-into-go/packages/log/>log</a></li>
 </ul>
 </li>
 </ul>
@@ -58,7 +60,7 @@ Github
 <label for=menu-control>
 <img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
 </label>
-<strong>Basic Types</strong>
+<strong>Packages</strong>
 <label for=toc-control>
 <img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
 </label>
@@ -67,13 +69,18 @@ Github
 <nav id=TableOfContents></nav>
 </aside>
 </header>
-<article class=markdown><p>Hello World!</p>
+<article class=markdown><p>이번 장에서는, Go의 Standard Library를 활용 방법을 정리한다.</p>
+<p>다음 내용들을 학습한다.</p>
+<ul>
+<li>
+<a href=/dive-into-go/packages/log><code>log</code> 패키지를 활용한 Unix 시스템 로그 활용 및 커스텀 로그 만들기</a></li>
+</ul>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/944b9ea88c57865f4e7b29d4f29c50644aba1ade title="Last modified by changhoi | September 15, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/554df2100984a7cd99bccec171cd517314a9a5bb title="Last modified by changhoi | September 17, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
-<span>September 15, 2021</span>
+<span>September 17, 2021</span>
 </a>
 </div>
 </div>
