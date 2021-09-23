@@ -3,19 +3,19 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Go는 1.11부터 모듈에 지원을 시작했다. Module은 Go의 새로운 의존성 관리 시스템으로, 의존성의 버전 정보를 명확하고 관리하기 쉽게 만든다. 모듈은 파일 트리에 저장되는 Go 패키지 모음으로, 루트에 go.mod 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 GOPATH 변수의 src 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 go.mod 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.
-새로운 모듈 만들기 #  GOPATH가 아닌 곧에 새로운 디렉토리를 만들고 패키지를 만들자.">
+새로운 모듈 만들기 #  GOPATH가 아닌 곳에 새로운 디렉토리를 만들고 패키지를 만들자.">
 <meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Module">
 <meta property="og:description" content="Go는 1.11부터 모듈에 지원을 시작했다. Module은 Go의 새로운 의존성 관리 시스템으로, 의존성의 버전 정보를 명확하고 관리하기 쉽게 만든다. 모듈은 파일 트리에 저장되는 Go 패키지 모음으로, 루트에 go.mod 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 GOPATH 변수의 src 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 go.mod 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.
-새로운 모듈 만들기 #  GOPATH가 아닌 곧에 새로운 디렉토리를 만들고 패키지를 만들자.">
+새로운 모듈 만들기 #  GOPATH가 아닌 곳에 새로운 디렉토리를 만들고 패키지를 만들자.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://changhoi.github.io/dive-into-go/basic/module/"><meta property="article:section" content="basic">
-<meta property="article:modified_time" content="2021-09-24T00:48:14+09:00">
+<meta property="article:modified_time" content="2021-09-24T07:24:56+09:00">
 <title>Module | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.f6b97ce8132bb1eba08a7e25534457c5c33db6bc35cccccaf01fbef7c58291c9.js integrity="sha256-9rl86BMrseugin4lU0RXxcM9trw1zMzK8B++98WCkck=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.737c61acc3c7ca47208c182ab2512fe19e2d8f20ea2ce6b79e540765f77fff5a.js integrity="sha256-c3xhrMPHykcgjBgqslEv4Z4tjyDqLOa3nlQHZfd//1o=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
 </head>
 <body dir=ltr>
@@ -98,7 +98,7 @@ Github
 새로운 모듈 만들기
 <a class=anchor href=#%ec%83%88%eb%a1%9c%ec%9a%b4-%eb%aa%a8%eb%93%88-%eb%a7%8c%eb%93%a4%ea%b8%b0>#</a>
 </h2>
-<p>GOPATH가 아닌 곧에 새로운 디렉토리를 만들고 패키지를 만들자.</p>
+<p>GOPATH가 아닌 곳에 새로운 디렉토리를 만들고 패키지를 만들자.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>hello</span>
 
 <span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Hello</span>() <span style=color:#66d9ef>string</span> {
@@ -138,7 +138,7 @@ Github
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/b72bd36a4a2aa5342fee7f9a2558d0a0f4cc744c title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/2d154c030d59019d4d8cfe95217dbf087f2b0a1a title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
 <span>September 23, 2021</span>
 </a>
