@@ -9,13 +9,13 @@
 프로그램을 짜다 보면, 어떤 시점에서는 결국 코드를 조직화 하고 분산시키기 위해 패키지를 만들어 사용해야 하는 시점이 있다.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://changhoi.github.io/dive-into-go/basic/package/"><meta property="article:section" content="basic">
-<meta property="article:modified_time" content="2021-09-24T00:48:14+09:00">
+<meta property="article:modified_time" content="2021-09-24T00:56:43+09:00">
 <title>Package | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.6f413258bacb142c39a38d870cc9ba60c25bf59a424e17378d3024258cc864c4.js integrity="sha256-b0EyWLrLFCw5o42HDMm6YMJb9ZpCThc3jTAkJYzIZMQ=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.f6b97ce8132bb1eba08a7e25534457c5c33db6bc35cccccaf01fbef7c58291c9.js integrity="sha256-9rl86BMrseugin4lU0RXxcM9trw1zMzK8B++98WCkck=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
 </head>
 <body dir=ltr>
@@ -105,7 +105,7 @@ Github
 <code>go env GOPATH</code> 명령어로 Go 환경 변수에 설정된 작업 디렉토리를 확인할 수 있다. 일반적으로 <code>~/go</code>로 설정되어있다.
 </blockquote>
 <blockquote class="book-hint info">
-과거엔 버전 관리 방식이 아주 신기하게, Go 패키지들이 <code>src</code> 디렉토리에 모이면 그 전체 파일들을 하나의 stable 버전으로 관리하는 방식이라고 한다. 즉, <code>GOPATH</code> 아래 모인 파일들이 하나의 모듈을 이룬다고 보는 것이다.
+과거엔 버전 관리 방식이 아주 신기하게, Go 패키지들이 <code>src</code> 디렉토리에 모이면 그 전체 파일들을 하나의 stable 버전으로 관리하는 방식이라고 한다. 즉, 디테일한 버전 관리는 git을 통하게 하고, <code>GOPATH</code> 아래 모인 파일들이 하나의 모듈을 이룬다고 보는 것이다.
 </blockquote>
 <p>예를 들어, <code>GOPATH/src</code>에 아래와 같은 패키지가 선언되어 있다.</p>
 <pre tabindex=0><code>bin/
@@ -328,7 +328,7 @@ MAIN FUNC / Hello, World!
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/b72bd36a4a2aa5342fee7f9a2558d0a0f4cc744c title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/f3f6b4851214162bb6ea9c50a7ea99c3275524c8 title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
 <span>September 23, 2021</span>
 </a>
