@@ -1,0 +1,176 @@
+<!doctype html><html lang=en dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Garbage Collection #  쓰레기 수집. 이때 쓰레기는 Heap영역에서 더 이상 사용하지 못하는 메모리를 의미하며, 이 부분들을 수집해 해제하는 역할을 Garbage Collection이라고 한다.
+ 이하 Garbage Collection은 GC로 표현한다.
+ GC는 일반적으로 다음 과정으로 동작한다.
+ GC 수행하는 스레드를 제외하고 모두 Stop the world 참조할 수 없는 객체에 대한 메모리 해제 GC 종료 및 스레드 작업 재개  Tricolor 알고리즘 #  많은 언어에서 Tricolor 알고리즘을 사용해 가비지 컬렉팅을 한다. Go 언어에서 이 알고리즘 명칭은 Tricolor Mark-and-Sweep 알고리즘이다.">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Garbage Collection">
+<meta property="og:description" content="Garbage Collection #  쓰레기 수집. 이때 쓰레기는 Heap영역에서 더 이상 사용하지 못하는 메모리를 의미하며, 이 부분들을 수집해 해제하는 역할을 Garbage Collection이라고 한다.
+ 이하 Garbage Collection은 GC로 표현한다.
+ GC는 일반적으로 다음 과정으로 동작한다.
+ GC 수행하는 스레드를 제외하고 모두 Stop the world 참조할 수 없는 객체에 대한 메모리 해제 GC 종료 및 스레드 작업 재개  Tricolor 알고리즘 #  많은 언어에서 Tricolor 알고리즘을 사용해 가비지 컬렉팅을 한다. Go 언어에서 이 알고리즘 명칭은 Tricolor Mark-and-Sweep 알고리즘이다.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/insides/garbage-collection/"><meta property="article:section" content="insides">
+<meta property="article:modified_time" content="2021-09-23T01:24:20+09:00">
+<title>Garbage Collection | Dive into Go</title>
+<link rel=manifest href=/dive-into-go/manifest.json>
+<link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
+<script defer src=/dive-into-go/flexsearch.min.js></script>
+<script defer src=/dive-into-go/en.search.min.6f413258bacb142c39a38d870cc9ba60c25bf59a424e17378d3024258cc864c4.js integrity="sha256-b0EyWLrLFCw5o42HDMm6YMJb9ZpCThc3jTAkJYzIZMQ=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/dive-into-go/><img src=/dive-into-go/logo.png alt=Logo><span>Dive into Go</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<p>
+<a href=/dive-into-go/basic/>Basic</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/basic/package/>Package</a></li>
+<li>
+<a href=/dive-into-go/basic/module/>Module</a></li>
+</ul>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/insides/>Insides</a></p>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/libraries/>Libraries</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/libraries/log/>log</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://github.com/changhoi/dive-into-go target=_blank rel=noopener>
+Github
+</a>
+</li>
+</ul>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
+</label>
+<strong>Garbage Collection</strong>
+<label for=toc-control>
+<img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#garbage-collection>Garbage Collection</a></li>
+<li><a href=#tricolor-알고리즘>Tricolor 알고리즘</a></li>
+<li><a href=#mark-and-sweep-알고리즘>Mark and Sweep 알고리즘</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown><h2 id=garbage-collection>
+Garbage Collection
+<a class=anchor href=#garbage-collection>#</a>
+</h2>
+<p>쓰레기 수집. 이때 쓰레기는 Heap영역에서 더 이상 사용하지 못하는 메모리를 의미하며, 이 부분들을 수집해 해제하는 역할을 Garbage Collection이라고 한다.</p>
+<blockquote>
+<p>이하 Garbage Collection은 GC로 표현한다.</p>
+</blockquote>
+<p>GC는 일반적으로 다음 과정으로 동작한다.</p>
+<ul>
+<li>GC 수행하는 스레드를 제외하고 모두 <strong>Stop the world</strong></li>
+<li>참조할 수 없는 객체에 대한 메모리 해제</li>
+<li>GC 종료 및 스레드 작업 재개</li>
+</ul>
+<h2 id=tricolor-알고리즘>
+Tricolor 알고리즘
+<a class=anchor href=#tricolor-%ec%95%8c%ea%b3%a0%eb%a6%ac%ec%a6%98>#</a>
+</h2>
+<p>많은 언어에서 <strong>Tricolor</strong> 알고리즘을 사용해 가비지 컬렉팅을 한다. Go 언어에서 이 알고리즘 명칭은 <strong>Tricolor Mark-and-Sweep</strong> 알고리즘이다. Tricolor라는 뜻은, 삼색 이라는 뜻으로, 힙에 있는 오브젝트를 세 가지 색으로 나누기 때문에 붙은 이름이다. 검은색, 흰색, 회색으로 오브젝트를 구분하며, 다음과 같은 의미를 갖는다.</p>
+<ul>
+<li>검은색: 흰색에 있는 오브젝트를 가리키는 포인터가 확실히 없는 오브젝트</li>
+<li>흰색: 검은색 오브젝트를 가리킬 수도 있는 오브젝트</li>
+<li>회색: 흰색 오브젝트 중 일부를 가리킬 수 있는 오브젝트</li>
+</ul>
+<p>우선 가비지 컬렉터는 모든 오브젝트를 흰색으로 두고 시작한다. 각 색은 집합 안에 담겨서 관리된다. 그리고 다음 알고리즘을 따라 흰색을 추려나간다.</p>
+<ol>
+<li><strong>루트 오브젝트</strong>를 모두 회색 집합에 넣는다.</li>
+<li>회색 집합의 오브젝트들을 검은색 오브젝트로 바꾸고, 흰색 오브젝트를 가리키고 있는 포인터가 있는지 확인한다.</li>
+<li>흰색 오브젝트를 가리키는 포인터가 하나라도 있다면, 해당 흰색 오브젝트를 회색 집합에 넣는다.</li>
+<li>2번과 3번 과정을 회색 집합에 아무 것도 남지 않을 때까지 반복한다.</li>
+<li>흰색 오브젝트가 가비지 컬렉션된다.</li>
+</ol>
+<blockquote class="book-hint info">
+<strong>루트 오브젝트</strong><br>
+스택에 있는 오브젝트, 또는 전역 변수와 같이 앱에서 직접 접근하는 오브젝트를 말한다.
+</blockquote>
+<blockquote class="book-hint info">
+이 작업이 진행되는 스레드를 뮤테이터(mutator) 스레드라고 한다. 뮤테이터는 힙에 있는 오브젝트의 포인터가 변경될 때마다 <code>write barrier</code>라는 함수를 실행한다. 오브젝트의 포인터가 변경되었다는 것은, 그 오브젝트에 접근이 가능하다는 것을 의미한다. 따라서 <code>write barrier</code>는 이 오브젝트를 회색 집합에 넣는다.
+</blockquote>
+<h2 id=mark-and-sweep-알고리즘>
+Mark and Sweep 알고리즘
+<a class=anchor href=#mark-and-sweep-%ec%95%8c%ea%b3%a0%eb%a6%ac%ec%a6%98>#</a>
+</h2>
+<p>기본적인 아이디어는, Stop the world 이후, 힙에 접근할 수 있는 오브젝트를 모두 검은색으로 바꾼다. 그 이후, 더 이상 확인해야 하는 회색 오브젝트가 없으면 Sweep 단계로 간다. <code>Mark and Sweep</code> 알고리즘은 GC를 구현한 알고리즘 중 간단하다는 장점이 있다. 그러나, Stop the world 방식이므로, 프로그램 실행을 중단해야 하는 문제가 있다.</p>
+<p>&mldr; 작성 중</p>
+</article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/f102743fc60a1e4a864ddcf8759deddfdeacaa82 title="Last modified by changhoi | September 22, 2021" target=_blank rel=noopener>
+<img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
+<span>September 22, 2021</span>
+</a>
+</div>
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#garbage-collection>Garbage Collection</a></li>
+<li><a href=#tricolor-알고리즘>Tricolor 알고리즘</a></li>
+<li><a href=#mark-and-sweep-알고리즘>Mark and Sweep 알고리즘</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>

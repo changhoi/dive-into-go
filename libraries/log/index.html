@@ -10,14 +10,14 @@
  Unix 시스템 로그 #  일반적으로 Unix 시스템의 로그 파일은 대부분 /var/log 디렉토리에 있다. 로깅 해야 하는 정보들을 커맨드라인에 표시하지 않고, 파일에 기록하는 것이 좋은데, 그 이유는 다음과 같다.
  영구 지속 유닉스 도구의 지원을 받아 검색 및 처리 가능  로그 서버 #  유닉스 시스템에서는 로그 파일을 로깅하는 분리된 서버 프로세스가 존재한다.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://changhoi.github.io/dive-into-go/packages/log/"><meta property="article:section" content="packages">
-<meta property="article:modified_time" content="2021-09-18T01:26:20+09:00">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/libraries/log/"><meta property="article:section" content="libraries">
+<meta property="article:modified_time" content="2021-09-24T00:48:14+09:00">
 <title>log | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.1091ddadf8c502be5efed02afbb59d1f86bbcece9d88a91f464f22f64d5f53ef.js integrity="sha256-EJHdrfjFAr5e/tAq+7WdH4a7zs6diKkfRk8i9k1fU+8=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.6f413258bacb142c39a38d870cc9ba60c25bf59a424e17378d3024258cc864c4.js integrity="sha256-b0EyWLrLFCw5o42HDMm6YMJb9ZpCThc3jTAkJYzIZMQ=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
 </head>
 <body dir=ltr>
@@ -38,17 +38,25 @@
 </div>
 <ul>
 <li>
-<a href=/dive-into-go/Insides/>Insides</a>
+<p>
+<a href=/dive-into-go/basic/>Basic</a></p>
 <ul>
 <li>
-<a href=/dive-into-go/Insides/compiler/>Compiler</a></li>
+<a href=/dive-into-go/basic/package/>Package</a></li>
+<li>
+<a href=/dive-into-go/basic/module/>Module</a></li>
 </ul>
 </li>
 <li>
-<a href=/dive-into-go/packages/>Packages</a>
+<p>
+<a href=/dive-into-go/insides/>Insides</a></p>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/libraries/>Libraries</a></p>
 <ul>
 <li>
-<a href=/dive-into-go/packages/log/ class=active>log</a></li>
+<a href=/dive-into-go/libraries/log/ class=active>log</a></li>
 </ul>
 </li>
 </ul>
@@ -77,8 +85,6 @@ Github
 <aside class="hidden clearfix">
 <nav id=TableOfContents>
 <ul>
-<li>
-<ul>
 <li><a href=#unix-시스템-로그>Unix 시스템 로그</a>
 <ul>
 <li><a href=#로그-서버>로그 서버</a></li>
@@ -94,43 +100,42 @@ Github
 </li>
 <li><a href=#커스텀-로그>커스텀 로그</a></li>
 </ul>
-</li>
-</ul>
 </nav>
 </aside>
 </header>
 <article class=markdown><p><code>log</code> 패키지는 로그 메시지를 유닉스 시스템 로그로 보내준다. 이번 장에서는 로그 수준과 종류를 설정해 로그를 시스템으로 보내는 방법을 정리하고 있다.</p>
 <hr>
-<h2 id=unix-시스템-로그>
+<h1 id=unix-시스템-로그>
 Unix 시스템 로그
 <a class=anchor href=#unix-%ec%8b%9c%ec%8a%a4%ed%85%9c-%eb%a1%9c%ea%b7%b8>#</a>
-</h2>
+</h1>
 <p>일반적으로 Unix 시스템의 로그 파일은 대부분 <code>/var/log</code> 디렉토리에 있다. 로깅 해야 하는 정보들을 커맨드라인에 표시하지 않고, 파일에 기록하는 것이 좋은데, 그 이유는 다음과 같다.</p>
 <ol>
 <li>영구 지속</li>
 <li>유닉스 도구의 지원을 받아 검색 및 처리 가능</li>
 </ol>
-<h3 id=로그-서버>
+<h2 id=로그-서버>
 로그 서버
 <a class=anchor href=#%eb%a1%9c%ea%b7%b8-%ec%84%9c%eb%b2%84>#</a>
-</h3>
+</h2>
 <p>유닉스 시스템에서는 로그 파일을 로깅하는 분리된 서버 프로세스가 존재한다. macOS의 경우 해당 프로세스 이름이 <code>syslogd</code>이다. 다른 대부분의 리눅스 시스템에서는 <code>rsyslogd</code>를 사용한다. <code>syslogd</code>보다 더 안정적이고 발전된 형태라고 한다.</p>
-<h3 id=로그-수준-log-level>
+<h2 id=로그-수준-log-level>
 로그 수준 (Log Level)
 <a class=anchor href=#%eb%a1%9c%ea%b7%b8-%ec%88%98%ec%a4%80-log-level>#</a>
-</h3>
+</h2>
 <p>로그 내용의 응급도를 표현하는 값이다. <code>debug</code>, <code>init</code>, <code>notice</code>, <code>warning</code>, <code>err</code>, <code>crit</code>, <code>alert</code>, <code>emerg</code> 등이 있다. 쓰여진 순서대로 중요도가 높은 로그를 나타낸다.</p>
-<h3 id=로그-종류-log-facilities>
+<h2 id=로그-종류-log-facilities>
 로그 종류 (Log Facilities)
 <a class=anchor href=#%eb%a1%9c%ea%b7%b8-%ec%a2%85%eb%a5%98-log-facilities>#</a>
-</h3>
+</h2>
 <p>로그 종류는 로그가 포함되어있는 카테고리를 의미한다. <code>auth</code>, <code>authpriv</code>, <code>cron</code>, <code>daemon</code>, <code>kern</code>, <code>lpr</code>, <code>mail</code>, <code>user</code>, <code>local0</code> ~ <code>local7</code> 등이 있다. 유닉스 서버에 <code>/etc/rsyslog.conf</code> 또는 <code>/etc/rsyslog.d/*.conf</code> 형태의 파일에서 종류들과 어떤 로그파일로 향하는지를 설정값으로 정해두었다.</p>
-<h2 id=log-패키지>
+<h1 id=log-패키지>
 log 패키지
 <a class=anchor href=#log-%ed%8c%a8%ed%82%a4%ec%a7%80>#</a>
-</h2>
+</h1>
 <p>Go에서 시스템 로그 파일에 메시지를 쓰는 방법을 확인해보자.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// sysLog.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
 
 <span style=color:#f92672>import</span> (
 	<span style=color:#e6db74>&#34;fmt&#34;</span>
@@ -169,14 +174,13 @@ log 패키지
 
     <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;log.Print: Logging in Go!&#34;</span>)
 </code></pre></div><p>결과는 브로드캐스팅 되기도 하고, 설정 파일에 지정된 파일들에 쌓이게 된다. 하나의 파일에 쌓일 수도 있지만 아닌 경우가 더 많다. 로그 레벨과 종류에 따라 여러 파일들에게 모두 중복해서 쓴다.</p>
-<h3 id=logfatal>
+<h2 id=logfatal>
 log.Fatal
 <a class=anchor href=#logfatal>#</a>
-</h3>
+</h2>
 <p>즉시 프로그램을 종료하고자 할 때 사용한다. 다만 종료시 설정된 로그 레벨과 로그 종류에 맞게 로그를 로그 서버에 보낸다.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// src/packages/log/fatal.go
-</span><span style=color:#75715e></span>
-<span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// fatal.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
 
 <span style=color:#f92672>import</span> (
 	<span style=color:#e6db74>&#34;fmt&#34;</span>
@@ -195,12 +199,12 @@ log.Fatal
 	<span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#e6db74>&#34;Fatal error on process&#34;</span>) <span style=color:#75715e>// 이 메시지가 /var/log/mail.log에 찍혀있다.
 </span><span style=color:#75715e></span>	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;You can&#39;t see me&#34;</span>)     <span style=color:#75715e>// 이 부분은 콘솔 위에서 확인할 수 없다.
 </span><span style=color:#75715e></span>}
-</code></pre></div><h3 id=logpanic>
+</code></pre></div><h2 id=logpanic>
 log.Panic
 <a class=anchor href=#logpanic>#</a>
-</h3>
+</h2>
 <p>프로세스가 심각한 에러로 인해 죽는 상황에서, 관련한 정보를 최대한 볼 수 있는 방식이다. 호출 스택과 유관한 정보들을 포함해서 로그를 보여준다.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// src/packages/log/panic.go
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// panic.go
 </span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
 
 <span style=color:#f92672>import</span> (
@@ -221,12 +225,12 @@ log.Panic
 	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;You can&#39;t see me&#34;</span>) <span style=color:#75715e>//마찬가지로 볼 수가 없다.
 </span><span style=color:#75715e></span>}
 </code></pre></div><hr>
-<h2 id=커스텀-로그>
+<h1 id=커스텀-로그>
 커스텀 로그
 <a class=anchor href=#%ec%bb%a4%ec%8a%a4%ed%85%80-%eb%a1%9c%ea%b7%b8>#</a>
-</h2>
+</h1>
 <p>시스템에 설정된 로그 파일 외에 원하는 파일에 로그를 보내야 할 때가 있다. 예를 들어, 독립적인 로그 정보를 수집하려고 한다든지, 다른 포맷을 쓰고 싶다든지 등의 이유가 있다. 일반적인 파일 쓰기와 유사하지만, 로거를 만들어서 사용하는 부분에서 차이가 있다.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// src/packages/log/custom.go
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// custom.go
 </span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
 
 <span style=color:#f92672>import</span> (
@@ -271,14 +275,14 @@ CUSTOM:2021/09/18 00:56:43 custom log
 </blockquote>
 <p><code>log.New</code>는 새로운 로거를 만들어준다. 첫 번째는 파일 쓰기 작업을 위한 <code>io.Writer</code> 타입이 필요하다. 두 번째는 로그 앞에 붙는 접두사를 설정하는 곳이고, 세 번째는 로그 파일의 특성(추가 정보) 속성이다. <code>log.LstdFlags</code>는 기본 로그의 로컬 타임과 로컬 데이트를 포함하는 플래그이다.</p>
 <p>
-<img src=/dive-into-go/images/packages/log/custom/01.png alt="다음과 같은 플래그들이 있다."></p>
+<img src=/dive-into-go/images/libraries/log/custom/01.png alt="다음과 같은 플래그들이 있다."></p>
 <p>위와 같은 플래그들이 있는데, 여러 플래그를 합성하기 위해서는 <code>log.LstdFlags | log.Lshortfile</code>과 같이 비트 OR 연산자로 합성할 수 있다. 예시와 같이 합성하면, 파일 이름과 파일 줄 수를 로그 파일에 추가해준다.</p>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/554df2100984a7cd99bccec171cd517314a9a5bb title="Last modified by changhoi | September 17, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/b72bd36a4a2aa5342fee7f9a2558d0a0f4cc744c title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
-<span>September 17, 2021</span>
+<span>September 23, 2021</span>
 </a>
 </div>
 </div>
@@ -289,8 +293,6 @@ CUSTOM:2021/09/18 00:56:43 custom log
 <aside class=book-toc>
 <div class=book-toc-content>
 <nav id=TableOfContents>
-<ul>
-<li>
 <ul>
 <li><a href=#unix-시스템-로그>Unix 시스템 로그</a>
 <ul>
@@ -306,8 +308,6 @@ CUSTOM:2021/09/18 00:56:43 custom log
 </ul>
 </li>
 <li><a href=#커스텀-로그>커스텀 로그</a></li>
-</ul>
-</li>
 </ul>
 </nav>
 </div>

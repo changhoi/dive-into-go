@@ -1,24 +1,22 @@
 <!doctype html><html lang=en dir=ltr>
 <head>
-<meta name=generator content="Hugo 0.88.1">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Dive into Go #  Go에 대한 전반적인 내용을 담을 수 있다면 좋겠지만, 당분간은 학습한 내용 위주로 정리될 예정입니다.
-Go에 대한 경험이 미숙하지만, 처음 보는 사람은 아닌 모든 개발자분들을 대상으로 삼고 정리하고 있습니다.
-오류를 발견했다면 꼭 알려주세요. 피드백을 너무 좋아합니다.
-본 내용들은 서치, 패키지 코드, 책을 통해 학습한 내용들입니다.">
-<meta name=theme-color content="#FFFFFF"><meta property="og:title" content>
+<meta name=description content="이번 장에서는, Go의 Standard Library를 활용 방법을 정리한다.
+다음 내용들을 학습한다.
+  log 패키지를 활용한 Unix 시스템 로그 활용 및 커스텀 로그 만들기  시작하기  ">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Packages">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://changhoi.github.io/dive-into-go/">
-<title> | Dive into Go</title>
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/libraries/">
+<title>Packages | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
 <script defer src=/dive-into-go/en.search.min.6f413258bacb142c39a38d870cc9ba60c25bf59a424e17378d3024258cc864c4.js integrity="sha256-b0EyWLrLFCw5o42HDMm6YMJb9ZpCThc3jTAkJYzIZMQ=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
-<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/index.xml title="Dive into Go">
+<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/libraries/index.xml title="Dive into Go">
 </head>
 <body dir=ltr>
 <input type=checkbox class="hidden toggle" id=menu-control>
@@ -53,7 +51,7 @@ Go에 대한 경험이 미숙하지만, 처음 보는 사람은 아닌 모든 �
 </li>
 <li>
 <p>
-<a href=/dive-into-go/libraries/>Libraries</a></p>
+<a href=/dive-into-go/libraries/ class=active>Libraries</a></p>
 <ul>
 <li>
 <a href=/dive-into-go/libraries/log/>log</a></li>
@@ -77,31 +75,24 @@ Github
 <label for=menu-control>
 <img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
 </label>
-<strong></strong>
+<strong>Packages</strong>
 <label for=toc-control>
 <img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
 </label>
 </div>
 <aside class="hidden clearfix">
-<nav id=TableOfContents>
-<ul>
-<li>
-<ul>
-<li><a href=#dive-into-go>Dive into Go</a></li>
-</ul>
-</li>
-</ul>
-</nav>
+<nav id=TableOfContents></nav>
 </aside>
 </header>
-<article class=markdown><h2 id=dive-into-go>
-Dive into Go
-<a class=anchor href=#dive-into-go>#</a>
-</h2>
-<p>Go에 대한 전반적인 내용을 담을 수 있다면 좋겠지만, 당분간은 학습한 내용 위주로 정리될 예정입니다.</p>
-<p>Go에 대한 경험이 미숙하지만, 처음 보는 사람은 아닌 모든 개발자분들을 대상으로 삼고 정리하고 있습니다.</p>
-<p>오류를 발견했다면 꼭 알려주세요. 피드백을 너무 좋아합니다.</p>
-<p>본 내용들은 서치, 패키지 코드, 책을 통해 학습한 내용들입니다.</p>
+<article class=markdown><p>이번 장에서는, Go의 Standard Library를 활용 방법을 정리한다.</p>
+<p>다음 내용들을 학습한다.</p>
+<ul>
+<li>
+<a href=/dive-into-go/libraries/log/><code>log</code> 패키지를 활용한 Unix 시스템 로그 활용 및 커스텀 로그 만들기</a></li>
+</ul>
+<a href=/dive-into-go/libraries/log/ class=book-btn>
+시작하기
+</a>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
@@ -117,15 +108,7 @@ Dive into Go
 </div>
 <aside class=book-toc>
 <div class=book-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li>
-<ul>
-<li><a href=#dive-into-go>Dive into Go</a></li>
-</ul>
-</li>
-</ul>
-</nav>
+<nav id=TableOfContents></nav>
 </div>
 </aside>
 </main>

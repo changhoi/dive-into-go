@@ -2,21 +2,21 @@
 <head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="이번 장은 Go 언어의 내부 동작에 집중된 이야기이다. 각 기능들의 내부 구조나 동작 과정을 정리햇다.
+<meta name=description content="이번 장은 Go 언어의 내부 동작에 집중된 이야기이다. 각 기능들의 내부 구조나 동작 과정을 정리했다.
 이번 장에서 다음 내용들을 학습할 수 있다.
-  Go 컴파일러 Go 언어의 가비지 콜렉터 Go 언어의 스케줄러 Go build와 Node Tree  시작하기  ">
+ Go 컴파일러 Go 언어의 가비지 콜렉터 Go 언어의 스케줄러 Go build  시작하기  ">
 <meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Inside">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://changhoi.github.io/dive-into-go/Insides/">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/insides/">
 <title>Inside | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.1091ddadf8c502be5efed02afbb59d1f86bbcece9d88a91f464f22f64d5f53ef.js integrity="sha256-EJHdrfjFAr5e/tAq+7WdH4a7zs6diKkfRk8i9k1fU+8=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.6f413258bacb142c39a38d870cc9ba60c25bf59a424e17378d3024258cc864c4.js integrity="sha256-b0EyWLrLFCw5o42HDMm6YMJb9ZpCThc3jTAkJYzIZMQ=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
-<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/Insides/index.xml title="Dive into Go">
+<link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/insides/index.xml title="Dive into Go">
 </head>
 <body dir=ltr>
 <input type=checkbox class="hidden toggle" id=menu-control>
@@ -36,17 +36,25 @@
 </div>
 <ul>
 <li>
-<a href=/dive-into-go/Insides/ class=active>Insides</a>
+<p>
+<a href=/dive-into-go/basic/>Basic</a></p>
 <ul>
 <li>
-<a href=/dive-into-go/Insides/compiler/>Compiler</a></li>
+<a href=/dive-into-go/basic/package/>Package</a></li>
+<li>
+<a href=/dive-into-go/basic/module/>Module</a></li>
 </ul>
 </li>
 <li>
-<a href=/dive-into-go/packages/>Packages</a>
+<p>
+<a href=/dive-into-go/insides/ class=active>Insides</a></p>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/libraries/>Libraries</a></p>
 <ul>
 <li>
-<a href=/dive-into-go/packages/log/>log</a></li>
+<a href=/dive-into-go/libraries/log/>log</a></li>
 </ul>
 </li>
 </ul>
@@ -76,24 +84,23 @@ Github
 <nav id=TableOfContents></nav>
 </aside>
 </header>
-<article class=markdown><p>이번 장은 Go 언어의 내부 동작에 집중된 이야기이다. 각 기능들의 내부 구조나 동작 과정을 정리햇다.</p>
+<article class=markdown><p>이번 장은 Go 언어의 내부 동작에 집중된 이야기이다. 각 기능들의 내부 구조나 동작 과정을 정리했다.</p>
 <p>이번 장에서 다음 내용들을 학습할 수 있다.</p>
 <ul>
-<li>
-<a href=/dive-into-go/Insides/compiler/>Go 컴파일러</a></li>
+<li>Go 컴파일러</li>
 <li>Go 언어의 가비지 콜렉터</li>
 <li>Go 언어의 스케줄러</li>
-<li>Go build와 Node Tree</li>
+<li>Go build</li>
 </ul>
-<a href=/dive-into-go/Insides/compiler/ class=book-btn>
+<a href=/dive-into-go/insides/compiler/ class=book-btn>
 시작하기
 </a>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/0914e765ac0734a5b61d8bcf0d06a6bfd95d76ed title="Last modified by changhoi | September 17, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/f102743fc60a1e4a864ddcf8759deddfdeacaa82 title="Last modified by changhoi | September 22, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
-<span>September 17, 2021</span>
+<span>September 22, 2021</span>
 </a>
 </div>
 </div>

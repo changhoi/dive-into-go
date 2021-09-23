@@ -1,0 +1,358 @@
+<!doctype html><html lang=en dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Go는 크든 작든 패키지들로 구성된다. 패키지는 Go로 작성된 코드를 말하고, 코드 시작점에 package 키워드를 사용해 이름을 지정한다. 그 중 main 패키지는 독립적인 프로그램으로서 동작하는 소스 코드임을 알리는 패키지이고, 이외 다른 패키지는 실행 파일을 만들 수 없다. 즉, 실행을 위해서는 main 패키지의 메인 함수에서 호출되어야 한다. main 패키지는 다른 패키지가 공존하는 곳만 아니라면 어디에 짜든 상관 없다.
+프로그램을 짜다 보면, 어떤 시점에서는 결국 코드를 조직화 하고 분산시키기 위해 패키지를 만들어 사용해야 하는 시점이 있다.">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Package">
+<meta property="og:description" content="Go는 크든 작든 패키지들로 구성된다. 패키지는 Go로 작성된 코드를 말하고, 코드 시작점에 package 키워드를 사용해 이름을 지정한다. 그 중 main 패키지는 독립적인 프로그램으로서 동작하는 소스 코드임을 알리는 패키지이고, 이외 다른 패키지는 실행 파일을 만들 수 없다. 즉, 실행을 위해서는 main 패키지의 메인 함수에서 호출되어야 한다. main 패키지는 다른 패키지가 공존하는 곳만 아니라면 어디에 짜든 상관 없다.
+프로그램을 짜다 보면, 어떤 시점에서는 결국 코드를 조직화 하고 분산시키기 위해 패키지를 만들어 사용해야 하는 시점이 있다.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/basic/package/"><meta property="article:section" content="basic">
+<meta property="article:modified_time" content="2021-09-24T00:48:14+09:00">
+<title>Package | Dive into Go</title>
+<link rel=manifest href=/dive-into-go/manifest.json>
+<link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
+<script defer src=/dive-into-go/flexsearch.min.js></script>
+<script defer src=/dive-into-go/en.search.min.6f413258bacb142c39a38d870cc9ba60c25bf59a424e17378d3024258cc864c4.js integrity="sha256-b0EyWLrLFCw5o42HDMm6YMJb9ZpCThc3jTAkJYzIZMQ=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/dive-into-go/><img src=/dive-into-go/logo.png alt=Logo><span>Dive into Go</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<p>
+<a href=/dive-into-go/basic/>Basic</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/basic/package/ class=active>Package</a></li>
+<li>
+<a href=/dive-into-go/basic/module/>Module</a></li>
+</ul>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/insides/>Insides</a></p>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/libraries/>Libraries</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/libraries/log/>log</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://github.com/changhoi/dive-into-go target=_blank rel=noopener>
+Github
+</a>
+</li>
+</ul>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
+</label>
+<strong>Package</strong>
+<label for=toc-control>
+<img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#패키지-만들기>패키지 만들기</a></li>
+<li><a href=#패키지-구성>패키지 구성</a></li>
+<li><a href=#init-함수><code>init()</code> 함수</a>
+<ul>
+<li><a href=#main-함수-실행을-위해-거쳐오는-길><code>main</code> 함수 실행을 위해 거쳐오는 길</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown><p>Go는 크든 작든 패키지들로 구성된다. <strong>패키지</strong>는 Go로 작성된 코드를 말하고, 코드 시작점에 <code>package</code> 키워드를 사용해 이름을 지정한다. 그 중 <code>main</code> 패키지는 독립적인 프로그램으로서 동작하는 소스 코드임을 알리는 패키지이고, 이외 다른 패키지는 실행 파일을 만들 수 없다. 즉, 실행을 위해서는 <code>main</code> 패키지의 메인 함수에서 호출되어야 한다. <code>main</code> 패키지는 다른 패키지가 공존하는 곳만 아니라면 어디에 짜든 상관 없다.</p>
+<p>프로그램을 짜다 보면, 어떤 시점에서는 결국 코드를 조직화 하고 분산시키기 위해 패키지를 만들어 사용해야 하는 시점이 있다. 패키지는 연관된 소스코드를 하나의 디렉토리 아래 둠으로써, 코드를 분산시킨다. 즉, 패키지는 소스 코드들로 구성되어있다.</p>
+<h1 id=패키지-만들기>
+패키지 만들기
+<a class=anchor href=#%ed%8c%a8%ed%82%a4%ec%a7%80-%eb%a7%8c%eb%93%a4%ea%b8%b0>#</a>
+</h1>
+<p>과거 Go는 패키지 임포트를 할 때, <code>GOPATH</code>에 설정된 작업 디렉토리의 <code>src</code> 디렉토리 아래나 <code>GOROOT</code>의 <code>src</code>에 패키지가 존재 했어야만 했다. 외부 모듈에 있는 패키지를 사용할 때에도 원래는 <code>GOPATH/src</code> 아래에 다운받아지는 방식이었지만, 현재는 모듈을 사용해 모듈과 유관한 패키지들을 버전과 함께 편하게 관리하고 있다.</p>
+<blockquote class="book-hint info">
+<code>go env GOPATH</code> 명령어로 Go 환경 변수에 설정된 작업 디렉토리를 확인할 수 있다. 일반적으로 <code>~/go</code>로 설정되어있다.
+</blockquote>
+<blockquote class="book-hint info">
+과거엔 버전 관리 방식이 아주 신기하게, Go 패키지들이 <code>src</code> 디렉토리에 모이면 그 전체 파일들을 하나의 stable 버전으로 관리하는 방식이라고 한다. 즉, <code>GOPATH</code> 아래 모인 파일들이 하나의 모듈을 이룬다고 보는 것이다.
+</blockquote>
+<p>예를 들어, <code>GOPATH/src</code>에 아래와 같은 패키지가 선언되어 있다.</p>
+<pre tabindex=0><code>bin/
+pkg/
+src/
+  diveintogo/
+    diveInto.go
+</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// diveintogo/diveInto.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>diveintogo</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Book</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;https://changhoi.github.io/dive-into-go&#34;</span>)
+}
+</code></pre></div><blockquote class="book-hint info">
+패키지 이름은 되도록 소문자로 구성하는 것이 컨벤션이다.
+</blockquote>
+<p>현재 버전(1.17) 기준으로 이 패키지를 사용하려고 하면 <code>GOROOT</code>에 있는 것이 아니기 때문에 사용할 수 없다는 명령어를 보게 된다. 이는 패키지를 관리하는 방식이 기본적으로 모듈을 선택하도록 되어있기 때문인데, 과거 <code>GOPATH</code>를 사용하는 방식으로 바꾸면 정상 동작한다. Go는 패키지를 선택하는 방식을 관리하는 플래그를 Go 환경 변수에 담아 두었다. Go의 환경 변수에 있는 <code>GO111MODULE</code>이라는 환경 변수인데, <code>on</code> 상태인 경우 모듈 사용하는 방식으로 패키지를 가져오고, <code>off</code> 상태인 경우 <code>GOPATH</code>에서 패키지를 가져온다.</p>
+<blockquote class="book-hint info">
+<code>GO111MODULE</code> 환경 변수는 임시 환경 변수로, 버전이 높아지고 모듈을 사용하는 쪽으로 완전히 정착되고 나면 사라질 예정이라고 한다. 1.17 버전에 사라질 것이라는 말도 있었는데, 일단 현재도 보인다.
+</blockquote>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ GO111MODULE<span style=color:#f92672>=</span>off go run main.go
+https://changhoi.github.io/dive-into-go
+</code></pre></div><blockquote class="book-hint info">
+<code>main</code> 패키지는 다른 패키지와 독립적인 곳이면 아무 공간에 두어도 된다.
+</blockquote>
+<p>위 방식은 1회 한정으로 환경 변수 값을 설정하는 방식이다. Go 모듈이 표준화 되고 있기 때문에, 기본값인 <code>on</code>으로 두고, 모듈을 사용하도록 하자. 모듈은 별도로 정리된 페이지가 있기 때문에, 자세한 내용은 생략하고, 패키지를 사용하기 위한 기본적인 방식을 보자.</p>
+<hr>
+<p>다음 명령어로 현재 디렉토리를 하나의 모듈로서 정의한다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>go mod init <span style=color:#f92672>[</span>module name<span style=color:#f92672>]</span>
+</code></pre></div><p>그러면, 이 디렉토리를 <code>GOPATH/src</code>와 같이 취급한다. 이 루트 디렉토리를 벗어나 다른 공간에서는 이 안에 있는 패키지를 인식할 수 없다.</p>
+<p>패키지를 구성하는 모듈로서 동작하게 하기 위해 위 명령어를 사용한 상태로 그 아래 패키지를 작성해야 한다.</p>
+<blockquote class="book-hint info">
+Go 모듈도 복잡한 역사와 구현 방식이 있기 때문에, 자세한 내용은 별도의 페이지에 정리했다.
+</blockquote>
+<h1 id=패키지-구성>
+패키지 구성
+<a class=anchor href=#%ed%8c%a8%ed%82%a4%ec%a7%80-%ea%b5%ac%ec%84%b1>#</a>
+</h1>
+<p>패키지는 일반적으로 디렉토리 기준으로 이름을 삼는다. 물론 같아야 하는 것은 아니다. 달라도 되지만, 임포트는 디렉토리 기준으로 임포트한다. 사용은 선언한 패키지 이름으로 사용한다. 다음과 같은 구성을 가진 모듈이 있다고 해보자.</p>
+<pre tabindex=0><code>operation/
+    math.go
+go.mod
+main.go
+</code></pre><p><code>main.go</code>는 <code>math.go</code>에서 두 수를 더하는 함수를 호출하고 있다. <code>math.go</code>는 <code>operation</code>이라는 이름의 디렉토리 아래 있지만, <code>mathematics</code>라는 이름의 패키지를 구성하고 있다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// main.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;declare/operation&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>mathematics</span>.<span style=color:#a6e22e>Add</span>(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>))
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// operation/math.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>mathematics</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Add</span>(<span style=color:#a6e22e>a</span>, <span style=color:#a6e22e>b</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>int</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>a</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>b</span>
+}
+</code></pre></div><p>위 코드는 문제 없이 돌아간다. Go가 기본적으로는 패키지를 임포트 하는 방식이 디렉토리를 기준으로 하고 있음을 알 수 있다. 이를 통해 한 가지 더 알 수 있는 점은, 하나의 패키지 디렉토리 아래, 같은 Depth에서는 여러 패키지를 가질 수 없다는 것이다. 만약 <code>operation/operation.go</code>가 있어서, 그 파일에서는 <code>package operation</code>으로 선언하면, Go에서 <code>declare/operation</code>으로 임포트 했을 때, 어떤 패키지를 가져올지 알 수 없다. 따라서, 패키지 이름은 디렉토리에 종속적이지는 않지만, 임포트는 디렉토리 기준으로 하고, 사용할 때는 선언한 패키지 이름으로 사용한다는 것을 알 수 있다.</p>
+<blockquote class="book-hint info">
+디렉토리와 다른 이름으로 패키지를 만들었다면, 개발환경에 따라 앞에 alias가 붙기도 한다. <code>import mathematics "declare/operation"</code>와 같이 자동 완성 해준다. 가독성을 위해 웬만하면 같게 하는 것이 좋다.
+</blockquote>
+<h1 id=init-함수>
+<code>init()</code> 함수
+<a class=anchor href=#init-%ed%95%a8%ec%88%98>#</a>
+</h1>
+<p>각 패키지들은 선택적으로 <code>init</code>이라는 프라이빗 함수를 만들 수 있다. 이 함수는 패키지가 초기화 될 때 자동적으로 실행되는 함수이다. 다음과 같은 특징을 가지고 있다.</p>
+<ul>
+<li>인자 값을 갖지 않고, 리턴 값도 없다.</li>
+<li>메인 함수에서도 <code>init</code> 호출이 Go 내부적으로 발생한다. 그런 경우, <code>main</code> 함수보다 앞서서 호출된다. 실제로 모든 <code>init</code> 함수들은 <code>main</code> 함수보다 먼저 호출된다.</li>
+<li>여러 개의 <code>init</code> 함수가 있을 수 있고, 이는 선언된 순서로 실행된다.</li>
+<li><code>init</code> 함수는 프로세스의 라이프타임 중 일 회 호출되고 이후 얼마나 임포트 되는지와 무관하게 호출되지 않는다.</li>
+<li>패키지는 여러 개의 파일을 담을 수 있다. 각 소스 파일은 하나 이상의 <code>init</code> 함수들을 가질 수 있다.</li>
+</ul>
+<p><code>init</code> 함수를 사용할만한 상황은, 패키지 함수들을 실행하기 전에 필요한 시간이 걸리는 작업을 미리 처리하는 상황이나, 존재해야 하는 파일을 미리 만들어둔다든지, 프로그램이 실행하기 위해 필요한 자원들이 모두 사용 가능한지 확인하는 등의 용도가 있다.</p>
+<h2 id=main-함수-실행을-위해-거쳐오는-길>
+<code>main</code> 함수 실행을 위해 거쳐오는 길
+<a class=anchor href=#main-%ed%95%a8%ec%88%98-%ec%8b%a4%ed%96%89%ec%9d%84-%ec%9c%84%ed%95%b4-%ea%b1%b0%ec%b3%90%ec%98%a4%eb%8a%94-%ea%b8%b8>#</a>
+</h2>
+<p>다음과 같은 프로그램으로 확인해보자. <code>test</code> 라는 모듈을 만들어서, 그 아래 <code>hello/hello.go</code>, <code>variable/variable.go</code>, <code>world/world.go</code>를 만들어 각 디렉토리 이름으로 패키지를 만들었다. 아래와 같은 구조이다.</p>
+<pre tabindex=0><code>hello/
+  hello.go
+  greeting.go
+variable/
+  variable.go
+world/
+  world.go
+go.mod
+main.go
+</code></pre><p>우선 각 패키지들은 모두 <code>[구분자] + INIT</code>이라는 문자열을 호출하는 <code>init</code> 함수가 있다. <code>variable.go</code>에서만 <code>init</code> 함수가 두 개 선언 되어있고, 각 <code>init</code> 함수는 마지막에 호출 순서에 따라 번호가 붙어있다. <code>hello.go</code>에서는 <code>world.go</code>에 있는 <code>World</code> 함수를 호출해서 <code>Hello</code> 함수를 구성하고 있다. <code>greeting.go</code>는 <code>main.go</code>에서 호출 중인 함수는 없지만, <code>hello</code> 패키지의 일부이고, 내부에 <code>init</code> 함수를 선언했다. <code>main.go</code>의 메인 함수에서는 <code>hello.World</code> 함수를 사용해 문자열을 출력한다. 그리고, 전역 변수들을 <code>variable.go</code>의 <code>OverVar</code> 함수와 <code>UnderVar</code> 함수를 이용해, 두 개를 초기화 하고 있다. 코드는 다음과 같다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// main.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+
+	<span style=color:#e6db74>&#34;test/hello&#34;</span>
+	<span style=color:#e6db74>&#34;test/variable&#34;</span>
+)
+
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>overVar</span> = <span style=color:#a6e22e>variable</span>.<span style=color:#a6e22e>OverVar</span>()
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>init</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;MAIN INIT&#34;</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Print</span>(<span style=color:#e6db74>&#34;MAIN FUNC / &#34;</span>)
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>hello</span>.<span style=color:#a6e22e>Hello</span>())
+}
+
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>underVar</span> = <span style=color:#a6e22e>variable</span>.<span style=color:#a6e22e>UnderVar</span>()
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// hello/hello.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>hello</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+	<span style=color:#e6db74>&#34;test/world&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>init</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;HELLO INIT&#34;</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Hello</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;Hello, &#34;</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>world</span>.<span style=color:#a6e22e>World</span>()
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// hello/greeting.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>hello</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>init</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;GREETING INIT&#34;</span>)
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// variable/variable.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>variable</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>init</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;VAR INIT1&#34;</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>OverVar</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;OverVar Call&#34;</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;OverVar&#34;</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>UnderVar</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;UnderVar Call&#34;</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;UnderVar&#34;</span>
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>init</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;VAR INIT2&#34;</span>)
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// world/world.go
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>world</span>
+
+<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>init</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;WORLD INIT&#34;</span>)
+}
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>World</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;World!&#34;</span>
+}
+</code></pre></div><p>이미지로 보자면 다음과 같이 의존 관계가 있다.</p>
+<p>
+<img src=/dive-into-go/images/basic/packages/init-package-graph.png alt></p>
+<p>실행 결과는 다음과 같다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ go run main.go
+WORLD INIT
+GREETING INIT
+HELLO INIT
+VAR INIT1
+VAR INIT2
+OverVar Call
+UnderVar Call
+MAIN INIT
+MAIN FUNC / Hello, World!
+</code></pre></div><p>위 결과를 통해, 재귀적으로 같은 순서로 패키지를 실행하는 것을 알 수 있는데 그 순서는 다음과 같다.</p>
+<ol>
+<li>패키지 도입</li>
+<li>패키지에서 의존하는 패키지가 있다면, 해당 패키지 초기화 (Import된 순서대로, 다시 1번부터 재귀적으로 동작)</li>
+<li>전역 변수 초기화 (선언된 순서대로)</li>
+<li>패키지의 <code>init</code> 함수 호출 (선언된 순서대로)</li>
+</ol>
+<p>위 과정으로 결과를 나눠보면, 다음과 같다.</p>
+<ol>
+<li><code>main</code> 패키지 도입
+<ol>
+<li><code>hello</code> 패키지 도입
+<ol>
+<li><code>world</code> 패키지 도입
+<ol>
+<li><code>world.go</code>의 <code>init</code> 함수 호출</li>
+</ol>
+</li>
+<li><code>greeting.go</code>와 <code>hello.go</code>의 <code>init</code> 함수 호출 (알파벳 순)</li>
+</ol>
+</li>
+<li><code>variable</code> 패키지 도입
+<ol>
+<li><code>variable.go</code>의 <code>init</code> 함수 호출 (선언 순)</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>전역 변수 초기화</li>
+<li>메인 함수 실행</li>
+</ol>
+</article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/b72bd36a4a2aa5342fee7f9a2558d0a0f4cc744c title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
+<img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
+<span>September 23, 2021</span>
+</a>
+</div>
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#패키지-만들기>패키지 만들기</a></li>
+<li><a href=#패키지-구성>패키지 구성</a></li>
+<li><a href=#init-함수><code>init()</code> 함수</a>
+<ul>
+<li><a href=#main-함수-실행을-위해-거쳐오는-길><code>main</code> 함수 실행을 위해 거쳐오는 길</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>
