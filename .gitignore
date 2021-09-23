@@ -9,6 +9,7 @@ hugo.darwin
 node_modules
 dist
 tmp
+pkg
 
 # Build and Release Folders
 bin/

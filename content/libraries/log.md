@@ -6,27 +6,28 @@ title: log
 
 ---
 
-## Unix 시스템 로그
+# Unix 시스템 로그
 
 일반적으로 Unix 시스템의 로그 파일은 대부분 `/var/log` 디렉토리에 있다. 로깅 해야 하는 정보들을 커맨드라인에 표시하지 않고, 파일에 기록하는 것이 좋은데, 그 이유는 다음과 같다.
 
 1. 영구 지속
 2. 유닉스 도구의 지원을 받아 검색 및 처리 가능
 
-### 로그 서버
+## 로그 서버
 유닉스 시스템에서는 로그 파일을 로깅하는 분리된 서버 프로세스가 존재한다. macOS의 경우 해당 프로세스 이름이 `syslogd`이다. 다른 대부분의 리눅스 시스템에서는 `rsyslogd`를 사용한다. `syslogd`보다 더 안정적이고 발전된 형태라고 한다.
 
-### 로그 수준 (Log Level)
+## 로그 수준 (Log Level)
 로그 내용의 응급도를 표현하는 값이다. `debug`, `init`, `notice`, `warning`, `err`, `crit`, `alert`, `emerg` 등이 있다. 쓰여진 순서대로 중요도가 높은 로그를 나타낸다.
 
-### 로그 종류 (Log Facilities)
+## 로그 종류 (Log Facilities)
 로그 종류는 로그가 포함되어있는 카테고리를 의미한다. `auth`, `authpriv`, `cron`, `daemon`, `kern`, `lpr`, `mail`, `user`, `local0` ~ `local7` 등이 있다. 유닉스 서버에 `/etc/rsyslog.conf` 또는 `/etc/rsyslog.d/*.conf` 형태의 파일에서 종류들과 어떤 로그파일로 향하는지를 설정값으로 정해두었다.
 
-## log 패키지
+# log 패키지
 
 Go에서 시스템 로그 파일에 메시지를 쓰는 방법을 확인해보자.
 
 ```go
+// sysLog.go
 package main
 
 import (
@@ -73,13 +74,12 @@ func main() {
 
 결과는 브로드캐스팅 되기도 하고, 설정 파일에 지정된 파일들에 쌓이게 된다. 하나의 파일에 쌓일 수도 있지만 아닌 경우가 더 많다. 로그 레벨과 종류에 따라 여러 파일들에게 모두 중복해서 쓴다.
 
-### log.Fatal
+## log.Fatal
 
 즉시 프로그램을 종료하고자 할 때 사용한다. 다만 종료시 설정된 로그 레벨과 로그 종류에 맞게 로그를 로그 서버에 보낸다.
 
 ```go
-// src/packages/log/fatal.go
-
+// fatal.go
 package main
 
 import (
@@ -101,12 +101,12 @@ func main() {
 }
 ```
 
-### log.Panic
+## log.Panic
 
 프로세스가 심각한 에러로 인해 죽는 상황에서, 관련한 정보를 최대한 볼 수 있는 방식이다. 호출 스택과 유관한 정보들을 포함해서 로그를 보여준다.
 
 ```go
-// src/packages/log/panic.go
+// panic.go
 package main
 
 import (
@@ -130,12 +130,12 @@ func main() {
 
 ---
 
-## 커스텀 로그
+# 커스텀 로그
 
 시스템에 설정된 로그 파일 외에 원하는 파일에 로그를 보내야 할 때가 있다. 예를 들어, 독립적인 로그 정보를 수집하려고 한다든지, 다른 포맷을 쓰고 싶다든지 등의 이유가 있다. 일반적인 파일 쓰기와 유사하지만, 로거를 만들어서 사용하는 부분에서 차이가 있다.
 
 ```go
-// src/packages/log/custom.go
+// custom.go
 package main
 
 import (
@@ -175,6 +175,6 @@ CUSTOM:2021/09/18 00:56:43 custom log
 
 `log.New`는 새로운 로거를 만들어준다. 첫 번째는 파일 쓰기 작업을 위한 `io.Writer` 타입이 필요하다. 두 번째는 로그 앞에 붙는 접두사를 설정하는 곳이고, 세 번째는 로그 파일의 특성(추가 정보) 속성이다. `log.LstdFlags`는 기본 로그의 로컬 타임과 로컬 데이트를 포함하는 플래그이다.
 
-![다음과 같은 플래그들이 있다.](/dive-into-go/images/packages/log/custom/01.png)
+![다음과 같은 플래그들이 있다.](/dive-into-go/images/libraries/log/custom/01.png)
 
 위와 같은 플래그들이 있는데, 여러 플래그를 합성하기 위해서는 `log.LstdFlags | log.Lshortfile`과 같이 비트 OR 연산자로 합성할 수 있다. 예시와 같이 합성하면, 파일 이름과 파일 줄 수를 로그 파일에 추가해준다.
