@@ -2,20 +2,20 @@
 <head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="Go는 1.11부터 모듈에 지원을 시작했다. Module은 Go의 새로운 의존성 관리 시스템으로, 의존성의 버전 정보를 명확하고 관리하기 쉽게 만든다. 모듈은 파일 트리에 저장되는 Go 패키지 모음으로, 루트에 go.mod 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 GOPATH 변수의 src 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 go.mod 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.
-새로운 모듈 만들기 #  GOPATH가 아닌 곳에 새로운 디렉토리를 만들고 패키지를 만들자.">
+<meta name=description content="모듈은 Go가 의존성을 관리하는 방법이다. Go는 1.11부터 모듈에 지원을 시작했다. 모듈은 파일 트리에 저장되는 Go 패키지 모음으로, 루트에 go.mod 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 GOPATH 변수의 src 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 go.mod 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.
+Go 모듈은 굉장히 자주 변경점이 생기고 있다. 공식 블로그에서 업데이트 되는 걸 주기적으로 확인해보자.">
 <meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Module">
-<meta property="og:description" content="Go는 1.11부터 모듈에 지원을 시작했다. Module은 Go의 새로운 의존성 관리 시스템으로, 의존성의 버전 정보를 명확하고 관리하기 쉽게 만든다. 모듈은 파일 트리에 저장되는 Go 패키지 모음으로, 루트에 go.mod 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 GOPATH 변수의 src 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 go.mod 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.
-새로운 모듈 만들기 #  GOPATH가 아닌 곳에 새로운 디렉토리를 만들고 패키지를 만들자.">
+<meta property="og:description" content="모듈은 Go가 의존성을 관리하는 방법이다. Go는 1.11부터 모듈에 지원을 시작했다. 모듈은 파일 트리에 저장되는 Go 패키지 모음으로, 루트에 go.mod 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 GOPATH 변수의 src 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 go.mod 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.
+Go 모듈은 굉장히 자주 변경점이 생기고 있다. 공식 블로그에서 업데이트 되는 걸 주기적으로 확인해보자.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://changhoi.github.io/dive-into-go/basic/module/"><meta property="article:section" content="basic">
-<meta property="article:modified_time" content="2021-09-24T07:24:56+09:00">
+<meta property="article:modified_time" content="2021-09-25T19:54:28+09:00">
 <title>Module | Dive into Go</title>
 <link rel=manifest href=/dive-into-go/manifest.json>
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.737c61acc3c7ca47208c182ab2512fe19e2d8f20ea2ce6b79e540765f77fff5a.js integrity="sha256-c3xhrMPHykcgjBgqslEv4Z4tjyDqLOa3nlQHZfd//1o=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.e152aac1608e41513d8eaed9254068c00ab53b4e16aca6eab72b170ad7deedd7.js integrity="sha256-4VKqwWCOQVE9jq7ZJUBowAq1O04WrKbqtysXCtfe7dc=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
 </head>
 <body dir=ltr>
@@ -87,60 +87,226 @@ Github
 <ul>
 <li><a href=#새로운-모듈-만들기>새로운 모듈 만들기</a></li>
 <li><a href=#외부-모듈-사용하기>외부 모듈 사용하기</a></li>
+<li><a href=#패키지를-모듈에-연결하는-과정>패키지를 모듈에 연결하는 과정</a></li>
+<li><a href=#gomod>go.mod</a>
+<ul>
+<li><a href=#module><code>module</code></a></li>
+<li><a href=#go><code>go</code></a></li>
+<li><a href=#require><code>require</code></a></li>
+<li><a href=#exclude><code>exclude</code></a></li>
+<li><a href=#replace><code>replace</code></a></li>
+<li><a href=#retract><code>retract</code></a></li>
+</ul>
+</li>
+<li><a href=#module-aware-명령어들>Module-aware 명령어들</a>
+<ul>
+<li><a href=#build-명령어들>Build 명령어들</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </nav>
 </aside>
 </header>
-<article class=markdown><p>Go는 1.11부터 모듈에 지원을 시작했다. Module은 Go의 새로운 의존성 관리 시스템으로, 의존성의 버전 정보를 명확하고 관리하기 쉽게 만든다. 모듈은 파일 트리에 저장되는 <strong>Go 패키지 모음</strong>으로, 루트에 <code>go.mod</code> 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 <code>GOPATH</code> 변수의 <code>src</code> 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 <code>go.mod</code> 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.</p>
+<article class=markdown><p>모듈은 Go가 의존성을 관리하는 방법이다. Go는 1.11부터 모듈에 지원을 시작했다. 모듈은 파일 트리에 저장되는 <strong>Go 패키지 모음</strong>으로, 루트에 <code>go.mod</code> 파일이 있다. Go 1.11부터, 진행 중인 디렉토리가 <code>GOPATH</code> 변수의 <code>src</code> 아래가 아닌 경우, go 명령어는 현재 디렉토리나 또는 상위 디렉토리가 <code>go.mod</code> 파일을 가지고 있을 때 모듈을 사용하도록 했다. 그리고 1.13 이후 모든 개발 환경에서 기본 모드로 모듈을 사용했다.</p>
+<blockquote class="book-hint info">
+Go 모듈은 굉장히 자주 변경점이 생기고 있다. 공식 블로그에서 업데이트 되는 걸 주기적으로 확인해보자.
+</blockquote>
+<blockquote class="book-hint info">
+이하 내용에서 <code>GOPATH/src</code>나 <code>GOPATH/pkg</code>는 Go 환경 변수에 <code>GOPATH</code>로 지정된 경로 아래 있는 <code>src</code> 디렉토리와 <code>pkg</code> 디렉토리를 의미한다.
+</blockquote>
 <h2 id=새로운-모듈-만들기>
 새로운 모듈 만들기
 <a class=anchor href=#%ec%83%88%eb%a1%9c%ec%9a%b4-%eb%aa%a8%eb%93%88-%eb%a7%8c%eb%93%a4%ea%b8%b0>#</a>
 </h2>
 <p>GOPATH가 아닌 곳에 새로운 디렉토리를 만들고 패키지를 만들자.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>hello</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>diveIntoGo</span>
 
-<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Hello</span>() <span style=color:#66d9ef>string</span> {
-	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;안녕, 세상.&#34;</span>
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>URL</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;https://changhoi.github.io/dive-into-go&#34;</span>
 }
-</code></pre></div><p>위 상태에서 디렉토리 <code>hello</code>는 패키지를 담고 있지만, 모듈은 아니다. 왜냐면 <code>go.mod</code> 파일이 없기 때문이다. <code>hello</code> 디렉토리를 모듈의 루트로 만들기 위해서는 <code>go mod init</code> 명령어를 수행하면 된다. <code>go mod init</code> 명령어 인자로 패키지 이름이 들어가야 하는데, 일반적으로 패키지가 공유되는 URL 패스를 사용한다. <code>example.com/hello</code> 라는 이름으로 패키지를 만들었다.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ go mod init example.com/hello
+</code></pre></div><p>이 패키지를 모듈로 만들고, Github에 배포해서 다른 모듈에서도 사용할 수 있게 만들 수 있다. 우선, 모듈로 만들기 위해서 <code>go mod init</code> 명령어를 수행한다. <code>go mod init [저장소]</code>와 같이 일반적으로 사용하는데, 저장소 주소는 주소 형태여야 하는 것은 아니다. 그냥 모듈의 이름이라고 보면 된다. 그러나 다른 모듈에서 이를 다운로드 할 때 이 이름을 기준으로 다운로드 하기 때문에, 외부에 공개하기 위해서는 저장소 이름을 써야 한다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ go mod init github.com/changhoi/example-module
 </code></pre></div><p>경과로 <code>go.mod</code> 파일을 얻을 수 있는데 처음 만들어진 <code>go.mod</code> 파일은 다음과 같이 생겼다.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a6e22e>module</span> <span style=color:#a6e22e>example</span>.<span style=color:#a6e22e>com</span><span style=color:#f92672>/</span><span style=color:#a6e22e>hello</span>
+<pre tabindex=0><code>module github.com/changhoi/example-module
 
-<span style=color:#66d9ef>go</span> <span style=color:#ae81ff>1.17</span>
-</code></pre></div><p><code>go.mod</code> 파일은 모듈의 루트에만 나타난다. 하위 디렉토리의 패키지에는 루트 패키지 이름에서 하위 디렉토리 패스가 붙은 경로로 임포트할 수 있다. 예를 들어서 <code>hello</code> 패키지 아래 <code>world</code> 패키지가 있다면, <code>hello/world</code> 패키지로 자동적으로 인식된다.</p>
-<h2 id=외부-모듈-사용하기>
+go 1.17
+</code></pre><p><code>go.mod</code> 파일은 모듈의 루트에만 나타난다. 하위 디렉토리의 패키지에는 루트 패키지 이름에서 하위 디렉토리 패스가 붙은 경로로 임포트할 수 있다. 예를 들어서 <code>hello</code> 패키지 아래 <code>world</code> 패키지가 있다면, <code>hello/world</code> 패키지로 자동적으로 인식된다.</p>
+<p>이렇게 만든 모듈에 태그를 붙여 커밋하고 저장소에 업로드한다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ git add .
+$ git commit -m <span style=color:#e6db74>&#34;v1.0.0&#34;</span>
+$ git tag v1.0.0
+$ git push origin master
+$ git push origin v1.0.0
+</code></pre></div><h2 id=외부-모듈-사용하기>
 외부 모듈 사용하기
 <a class=anchor href=#%ec%99%b8%eb%b6%80-%eb%aa%a8%eb%93%88-%ec%82%ac%ec%9a%a9%ed%95%98%ea%b8%b0>#</a>
 </h2>
-<p>Go 모듈을 도입한 주된 이유는 다른 개발자들이 작성한 코드를 사용하는 경험을 개선하기 위해서이다. 방금 짠 <code>hello.go</code>에서 외부 패키지를 사용해보자.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>hello</span>
+<p>Go 모듈을 도입한 주된 이유는 다른 개발자들이 작성한 코드를 사용하는 경험을 개선하기 위해서이다. 방금 짠 모듈을 다른 모듈에서 사용해보자. 아무 곳에나 메인 함수를 만들고 <code>go mod init</code> 명령어로 모듈을 구성하고, 다음 코드를 쓴다. 모듈 이름은 임의로 설정해도 상관없다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
 
-<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;rsc.io/quote&#34;</span>
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
 
-<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Hello</span>() <span style=color:#66d9ef>string</span> {
-	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>quote</span>.<span style=color:#a6e22e>Hello</span>()
+	<span style=color:#e6db74>&#34;github.com/changhoi/example-module/diveIntoGo&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>diveIntoGo</span>.<span style=color:#a6e22e>URL</span>())
 }
-</code></pre></div><p>go 명령은 <code>go.mod</code>에 나열된 특정 의존성 모듈의 버전을 사용해 임포트를 해결한다. 그런데, 임포트한 패키지가 <code>go.mod</code> 안의 어떠한 모듈에서도 제공하지 않는 패키지라면 go 명령어는 자동적으로 그 패키지를 담고 있는 모듈을 찾아서 <code>go.mod</code>에 최신버전으로 추가한다. 예시에서는 <code>rsc.io/quote</code> 패키지를 새로 다운로드하고, 그 패키지가 사용하는 두 개의 종속성 패키지를 추가로 가져왔다.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a6e22e>module</span> <span style=color:#a6e22e>example</span>.<span style=color:#a6e22e>com</span><span style=color:#f92672>/</span><span style=color:#a6e22e>hello</span>
+</code></pre></div><p>이를 정상 동작 시키기 위해서는 <code>go get github.com/changhoi/example-module</code>을 해주어야 한다. 해당 명령어를 입력하면 <code>go.mod</code>에 변경이 생기고, <code>go.sum</code>이 생긴다. 그리고 <code>GOPATH/pkg/github.com</code>에도 <code>changhoi/example-module@v1.0.0</code>이라는 디렉토리와, 좀 전에 짰던 코드들이 다운로드 되어있는 것을 확인할 수 있다. 메인 함수를 실행해보면 정상적으로 url이 출력되는 것을 확인할 수 있다.</p>
+<div class=book-expand>
+<label>
+<div class="book-expand-head flex justify-between">
+<span>결괴</span>
+<span>↕</span>
+</div>
+<input type=checkbox class=hidden>
+<div class="book-expand-content markdown-inner">
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ go run main.go
+https://changhoi.github.io/dive-into-go
+</code></pre></div>
+</div>
+</label>
+</div>
+<h2 id=패키지를-모듈에-연결하는-과정>
+패키지를 모듈에 연결하는 과정
+<a class=anchor href=#%ed%8c%a8%ed%82%a4%ec%a7%80%eb%a5%bc-%eb%aa%a8%eb%93%88%ec%97%90-%ec%97%b0%ea%b2%b0%ed%95%98%eb%8a%94-%ea%b3%bc%ec%a0%95>#</a>
+</h2>
+<p>만약 go 명령어가 (<code>패키지 경로</code>)<code>package path</code>를 사용해서 패키지를 불러오고 있다면, go 명령어는 어떤 모듈이 해당 패키지를 제공하고 있는지를 결정해야 한다. <code>go</code> 명령어는 <code>빌드 목록</code>(<code>build list</code>)에서 패키지의 접두사 부분을 <code>모듈 경로</code>(<code>module path</code>)로 가지고 있는 모듈을 찾는다. 예를 들어서, <code>example.com/a/b</code>라는 패키지가 사용되고 있고, <code>example.com/a</code> 모듈이 빌드 리스트에 있다면 go 명령어는 <code>example.com/a/b</code> 디렉토리에 <code>b</code> 패키지가 있는지를 확인한다. 하나 이상의 <code>*.go</code> 파일이 있어야 해당 디렉토리가 패키지로서 존재한다고 판단한다. 만약 단 하나의 모듈만 해당 패키지를 제공하고 있는 경우, 그 모듈이 사용되고, 두 개 이상의 모듈이 발견되면 에러를 내보낸다.</p>
+<p>go 명령어가 새로운 모듈을 찾아야 하는 경우, 즉 필요한 모듈이 설치되지 않은 상태인 경우, <code>GOPROXY</code> 환경 변수를 확인한다. <code>GOPROXY</code>는 콤마(<code>,</code>)로 연결된 리스트인데, 프록시 주소나 키워드 (<code>direct</code> or <code>off</code>)로 구성되어있다. 1.17 버전 기준으로 기본 값은 아래와 같다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ go env GOPROXY
+https://proxy.golang.org,direct
+</code></pre></div><p>프록시 주소는 go 명령어가 HTTP 통신을 하는 웹서버의 주소인데, 이 서버에서 <code>go.mod</code> 파일과 모듈 압축 파일을 받아온다. <code>Module proxy</code>에 대한 자세한 내용은 이
+<a href=https://golang.org/ref/mod#module-proxy>링크</a>에서 확인할 수 있다. <code>direct</code> 키워드는 go 명령어가 버전 컨트롤 시스템과 직접 커뮤니케이션 해야 한다는 것을 말한다. <code>off</code> 키워드는 프록시 주소들 외 커뮤니케이션을 직접 시도하지 않는다.</p>
+<blockquote class="book-hint info">
+<ul>
+<li><code>build list</code>: <code>go build</code>나 <code>go list</code>, <code>go test</code>와 같은 빌드 명령어에서 사용되는 모듈 버전들의 리스트</li>
+</ul>
+</blockquote>
+<p>모든 <code>GOPROXY</code>의 엔트리에 따라서, go 명령어는 패키지를 제공할만한 모든 모듈 패스들에게 가장 최신 버전의 패키지를 요청한다. &ldquo;패키지를 제공할만한 모든 모듈 패스"라는 뜻은, 예를 들어서 <code>example.com/a/b</code>라는 패키지를 찾고 있다면, <code>example.com/a</code>, <code>example.com</code>을 의미한다. 성공적으로 요청을 받은 모듈 패스들에 대해 go 명령어는 가장 길게 매칭된 경로의 모듈을 사용한다. 그러나 모듈은 찾았지만 찾고자 하는 패키지가 존재하지 않는다고 판단되면, 에러를 내보낸다. 만약 모듈조차 찾지 못 하면 <code>GOPROXY</code> 리스트의 다음 주소로 옮겨간다.</p>
+<p>예를 들어서, go 명령어가 <code>golang.org/x/net/html</code>이라는 패키지를 담은 모듈을 찾고 있고, <code>GOPROXY</code>가 <code>https://corp.example.com,https://proxy.golang.org</code>로 설정되어있다면, 다음 순서로 요청을 보낸다.</p>
+<ul>
+<li>To
+<a href=https://corp.example.com/>https://corp.example.com/</a> (병렬 요청):
+<ul>
+<li>Request for latest version of golang.org/x/net/html</li>
+<li>Request for latest version of golang.org/x/net</li>
+<li>Request for latest version of golang.org/x</li>
+<li>Request for latest version of golang.org</li>
+</ul>
+</li>
+<li>To
+<a href=https://proxy.golang.org/>https://proxy.golang.org/</a> (모든
+<a href=https://corp.example.com/>https://corp.example.com/</a> 에서의 요청이 404이거나 410라면):
+<ul>
+<li>Request for latest version of golang.org/x/net/html</li>
+<li>Request for latest version of golang.org/x/net</li>
+<li>Request for latest version of golang.org/x</li>
+<li>Request for latest version of golang.org</li>
+</ul>
+</li>
+</ul>
+<p>이렇게 적절한 모듈을 찾게 되면, go 명령어는 <code>require</code> 키워드를 새로운 모듈 경로와 버전과 함께 메인 모듈의 <code>go.mod</code>에 추가한다. 이렇게 설정되면 미래에 같은 모듈은 항상 같은 버전의 패키지를 다운하게 된다. 만약, 연결된 패키지가 메인 모듈 안에 있는 패키지에서 임포트 되고 있지 않다면, 새로 만들어진 <code>require</code> 키워드 라인 마지막에 <code>//indirect</code> 주석이 붙게 된다.</p>
+<h2 id=gomod>
+go.mod
+<a class=anchor href=#gomod>#</a>
+</h2>
+<p>하나의 모듈은 UTF-8로 인코딩 된 텍스트 파일에 정의된다. 이 파일의 이름은 <code>go.mod</code>이고, 모듈의 루트 디렉토리에 위치한다. <code>go.mod</code>는 라인 지향적인 정의를 하고 있다. 즉, 하나의 라인이 하나의 지시사항을 의미한다. 각 줄은 키워드와 인자값들로 이루어져있다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go.mod data-lang=go.mod>module example.com<span style=color:#f92672>/</span>my<span style=color:#f92672>/</span>thing
 
-<span style=color:#66d9ef>go</span> <span style=color:#ae81ff>1.17</span>
+go <span style=color:#ae81ff>1.12</span>
 
-<span style=color:#a6e22e>require</span> <span style=color:#a6e22e>rsc</span>.<span style=color:#a6e22e>io</span><span style=color:#f92672>/</span><span style=color:#a6e22e>quote</span> <span style=color:#a6e22e>v1</span><span style=color:#ae81ff>.5.2</span>
+require example.com<span style=color:#f92672>/</span>other<span style=color:#f92672>/</span>thing v1.<span style=color:#ae81ff>0.2</span>
+require example.com<span style=color:#f92672>/</span>new<span style=color:#f92672>/</span>thing<span style=color:#f92672>/</span>v2 v2.<span style=color:#ae81ff>3.4</span>
+exclude example.com<span style=color:#f92672>/</span>old<span style=color:#f92672>/</span>thing v1.<span style=color:#ae81ff>2.3</span>
+replace example.com<span style=color:#f92672>/</span>bad<span style=color:#f92672>/</span>thing v1.<span style=color:#ae81ff>4.5</span> <span style=color:#f92672>=&gt;</span> example.com<span style=color:#f92672>/</span>good<span style=color:#f92672>/</span>thing v1.<span style=color:#ae81ff>4.5</span>
+retract [v1.<span style=color:#ae81ff>9.0</span>, v1.<span style=color:#ae81ff>9.5</span>]
+</code></pre></div><p>각 키워드들은 Go에서 임포트 하는 것처럼, 괄호를 사용해 인접한 블록을 하나의 블록으로 만들 수 있다.</p>
+<pre tabindex=0><code>require (
+    example.com/new/thing/v2 v2.3.4
+    example.com/old/thing v1.2.3
+)
+</code></pre><p>키워드는 다음과 같은 의미를 지닌다.</p>
+<h3 id=module>
+<code>module</code>
+<a class=anchor href=#module>#</a>
+</h3>
+<p>메인 모듈의 경로를 정의한다. <code>go.mod</code> 파일은 반드시 하나의 <code>module</code> 키워드가 있어야 한다.</p>
+<pre tabindex=0><code>module golang.org/x/net
+</code></pre><h3 id=go>
+<code>go</code>
+<a class=anchor href=#go>#</a>
+</h3>
+<p>해당 모듈이 주어진 go 버전으로 작성되었음을 가리키는 키워드이다.</p>
+<pre tabindex=0><code>go 1.17
+</code></pre><h3 id=require>
+<code>require</code>
+<a class=anchor href=#require>#</a>
+</h3>
+<p>모듈 의존성의 최소 요구되는 버전을 선언한다. go 명령어는 각 요구되는 모듈 버전에 대해, 다시 <code>go.mod</code> 파일을 로드해서 해당 파일이 필요한 의존성을 통합한다. 모든 요구 사항들이 로드되고 나면
+<a href=https://golang.org/ref/mod#minimal-version-selection><code>MVS</code>(<code>Minimal Version Selelction</code>) 알고리즘</a>에 따라서 모듈을 선택하고 빌드 리스트를 만든다.</p>
+<p>go 명령어는 요구되는 모듈을 직접적으로 메인 모듈에서 사용하지는 않는 경우, <code>//indirect</code> 주석을 붙인다.</p>
+<pre tabindex=0><code>require golang.org/x/net v1.2.3
 
-<span style=color:#a6e22e>require</span> (
-	<span style=color:#a6e22e>golang</span>.<span style=color:#a6e22e>org</span><span style=color:#f92672>/</span><span style=color:#a6e22e>x</span><span style=color:#f92672>/</span><span style=color:#a6e22e>text</span> <span style=color:#a6e22e>v0</span><span style=color:#ae81ff>.0.0</span><span style=color:#f92672>-</span><span style=color:#ae81ff>20170915032832</span><span style=color:#f92672>-</span><span style=color:#ae81ff>14</span><span style=color:#a6e22e>c0d48ead0c</span> <span style=color:#75715e>// indirect
-</span><span style=color:#75715e></span>	<span style=color:#a6e22e>rsc</span>.<span style=color:#a6e22e>io</span><span style=color:#f92672>/</span><span style=color:#a6e22e>sampler</span> <span style=color:#a6e22e>v1</span><span style=color:#ae81ff>.3.0</span> <span style=color:#75715e>// indirect
-</span><span style=color:#75715e></span>)
-</code></pre></div><p>&mldr; 공부 더 하는 중</p>
+require (
+    golang.org/x/crypto v1.4.5 // indirect
+    golang.org/x/text v1.6.7
+)
+</code></pre><h3 id=exclude>
+<code>exclude</code>
+<a class=anchor href=#exclude>#</a>
+</h3>
+<p>특정 모듈의 버전이 go 명령어에 의해 로드되는 것을 막는다. 이 키워드는 메인 모듈의 <code>go.mod</code>에만 적용되고 다른 모듈들에게는 무시된다.</p>
+<pre tabindex=0><code>exclude golang.org/x/net v1.2.3
+
+exclude (
+    golang.org/x/crypto v1.4.5
+    golang.org/x/text v1.6.7
+)
+</code></pre><h3 id=replace>
+<code>replace</code>
+<a class=anchor href=#replace>#</a>
+</h3>
+<p>특정 버전의 모듈의 내용을 다른 모듈의 버전으로 대체하거나, 로컬 디렉토리로 대체하게 한다. go 명령어가 의존성을 해결할 때 <code>replacement path</code> 자리를 사용하게 된다.</p>
+<pre tabindex=0><code>replace module-path [module-version] =&gt; replacement-path [replacement-version]
+
+require example.com/othermodule v1.2.3
+
+replace example.com/othermodule =&gt; example.com/myfork/othermodule v1.2.3-fixed
+</code></pre><h3 id=retract>
+<code>retract</code>
+<a class=anchor href=#retract>#</a>
+</h3>
+<p><code>go.mod</code>에 의해 정의된 특정 모듈의 하나의 버전이나 버전의 범위를 지정한다. 이 키워드는 하나의 버전이 임시로 퍼블리싱 되어있거나 심각한 문제가 특정 버전이 배포된 다음 발견된 상황에 아주 유용하다.</p>
+<pre tabindex=0><code>retract version // rationale
+retract [version-low,version-high] // rationale
+
+retract v1.1.0 // Published accidentally.
+retract [v1.0.0,v1.0.5] // Build broken on some platforms.
+</code></pre><h2 id=module-aware-명령어들>
+Module-aware 명령어들
+<a class=anchor href=#module-aware-%eb%aa%85%eb%a0%b9%ec%96%b4%eb%93%a4>#</a>
+</h2>
+<p>Module-aware라는 것은 패키지를 찾는 방법 중 하나이다. 두 가지 모드가 있는데, 하나는 Module-aware 모드이고, 하나는 GOPATH 모드이다. Module-aware 모드에서는 go 명령어들이 <code>go.mod</code>를 사용해서 의존성을 찾는다. GOPATH 모드에서는 의존성을 벤더 디렉토리(vendor directories)와 GOPATH에서 찾는다.</p>
+<p>1.16 버전 이후로는 Module-aware이 기본 모드가 되었다. 더 낮은 버전에서는 조상 디렉토리나, 현재 디렉토리에 <code>go.mod</code>가 있어야 Module-aware 모드로 동작했다. 이 두 가지 방식은 Go 환경 변수 중에 <code>GO111MODULE</code> 환경 변수에 의해 결정된다. 다음 세 가지 값 중 하나를 갖는다.</p>
+<ul>
+<li><code>off</code>: <code>go.mod</code> 파일을 무시하고 GOPATH 모드를 사용한다.</li>
+<li><code>on</code>이거나 세팅값이 없는 경우: Module-aware 모드로 동작한다. 심지어 <code>go.mod</code> 파일을 찾지 못했더라도 이 방법으로 동작한다. 즉, <code>go.mod</code>가 없으면 동작하지 않는 명령어들이 있다.</li>
+<li><code>auto</code>: <code>go.mod</code> 파일이 있으면 Mode-aware 모드로 동작한다. 1.15 버전 이전에는 이것이 기본값이다. <code>go mod</code>의 하위 명령어들과 버전 쿼리 (version query)가 있는 <code>go install</code> 명령어의 경우는 <code>go.mod</code>가 없어도 Module-aware 모드로 동작한다.</li>
+</ul>
+<h3 id=build-명령어들>
+Build 명령어들
+<a class=anchor href=#build-%eb%aa%85%eb%a0%b9%ec%96%b4%eb%93%a4>#</a>
+</h3>
+<p>&mldr; 공부중</p>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/2d154c030d59019d4d8cfe95217dbf087f2b0a1a title="Last modified by changhoi | September 23, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/be9a7cd26647581f1113b3d78c29186d87c207fe title="Last modified by changhoi | September 25, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
-<span>September 23, 2021</span>
+<span>September 25, 2021</span>
 </a>
 </div>
 </div>
@@ -156,6 +322,22 @@ Github
 <ul>
 <li><a href=#새로운-모듈-만들기>새로운 모듈 만들기</a></li>
 <li><a href=#외부-모듈-사용하기>외부 모듈 사용하기</a></li>
+<li><a href=#패키지를-모듈에-연결하는-과정>패키지를 모듈에 연결하는 과정</a></li>
+<li><a href=#gomod>go.mod</a>
+<ul>
+<li><a href=#module><code>module</code></a></li>
+<li><a href=#go><code>go</code></a></li>
+<li><a href=#require><code>require</code></a></li>
+<li><a href=#exclude><code>exclude</code></a></li>
+<li><a href=#replace><code>replace</code></a></li>
+<li><a href=#retract><code>retract</code></a></li>
+</ul>
+</li>
+<li><a href=#module-aware-명령어들>Module-aware 명령어들</a>
+<ul>
+<li><a href=#build-명령어들>Build 명령어들</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
