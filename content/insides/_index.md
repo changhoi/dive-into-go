@@ -6,10 +6,5 @@ title: Inside
 
 이번 장에서 다음 내용들을 학습할 수 있다.
 
-- Go 컴파일러
 - Go 언어의 가비지 콜렉터
 - Go 언어의 스케줄러
-- Go build
-
-
-{{< button relref="/insides/compiler" >}}시작하기{{< /button >}}

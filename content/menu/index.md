@@ -9,3 +9,4 @@ headless = true
 
 - [Libraries]({{< relref "/libraries" >}})
   - [log]({{< relref "/libraries/log" >}})
+  - [context]({{< relref "/libraries/context" >}})
