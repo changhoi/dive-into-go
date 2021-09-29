@@ -4,7 +4,7 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="이번 장은 Go 언어의 내부 동작에 집중된 이야기이다. 각 기능들의 내부 구조나 동작 과정을 정리했다.
 이번 장에서 다음 내용들을 학습할 수 있다.
- Go 컴파일러 Go 언어의 가비지 콜렉터 Go 언어의 스케줄러 Go build  시작하기  ">
+ Go 언어의 가비지 콜렉터 Go 언어의 스케줄러  ">
 <meta name=theme-color content="#FFFFFF"><meta property="og:title" content="Inside">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
@@ -14,7 +14,7 @@
 <link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
 <script defer src=/dive-into-go/flexsearch.min.js></script>
-<script defer src=/dive-into-go/en.search.min.e152aac1608e41513d8eaed9254068c00ab53b4e16aca6eab72b170ad7deedd7.js integrity="sha256-4VKqwWCOQVE9jq7ZJUBowAq1O04WrKbqtysXCtfe7dc=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/en.search.min.67246ed85c893e582286034a1fef23b3848de683b7fa16954313c27f79b2d0f6.js integrity="sha256-ZyRu2FyJPlgihgNKH+8js4SN5oO3+haVQxPCf3my0PY=" crossorigin=anonymous></script>
 <script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://changhoi.github.io/dive-into-go/insides/index.xml title="Dive into Go">
 </head>
@@ -55,6 +55,8 @@
 <ul>
 <li>
 <a href=/dive-into-go/libraries/log/>log</a></li>
+<li>
+<a href=/dive-into-go/libraries/context/>context</a></li>
 </ul>
 </li>
 </ul>
@@ -87,20 +89,15 @@ Github
 <article class=markdown><p>이번 장은 Go 언어의 내부 동작에 집중된 이야기이다. 각 기능들의 내부 구조나 동작 과정을 정리했다.</p>
 <p>이번 장에서 다음 내용들을 학습할 수 있다.</p>
 <ul>
-<li>Go 컴파일러</li>
 <li>Go 언어의 가비지 콜렉터</li>
 <li>Go 언어의 스케줄러</li>
-<li>Go build</li>
 </ul>
-<a href=/dive-into-go/insides/compiler/ class=book-btn>
-시작하기
-</a>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
-<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/f102743fc60a1e4a864ddcf8759deddfdeacaa82 title="Last modified by changhoi | September 22, 2021" target=_blank rel=noopener>
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/b80c93314e519f2f611045276ff53feb467d8f84 title="Last modified by changhoi | September 29, 2021" target=_blank rel=noopener>
 <img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
-<span>September 22, 2021</span>
+<span>September 29, 2021</span>
 </a>
 </div>
 </div>

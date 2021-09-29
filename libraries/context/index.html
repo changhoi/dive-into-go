@@ -1,0 +1,464 @@
+<!doctype html><html lang=en dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="context 패키지는 Go 개발을 하다 보면 심심치 않게 만날 수 있다. 패키지의 공식문서에 따르면, 이 패키지의 주된 목표는 데드라인, 취소 신호 및 기타 요청 범위 값을 API 경계와 프로세스들 사이에 전달하는 컨텍스트 유형을 만들기 위해 사용한다.
+ Context 타입 #  Context 타입은 다섯 가지의 메소드를 가지고 있는 인터페이스이다. Deadline, Err, Value, Done이 있다.
+type Context interface { Deadline() (deadline time.Time, ok bool) Done() <-chan struct{} Err() error Value(key interface{}) interface{} } Deadline #  컨텍스트를 대신해 수행된 작업을 취소해야 하는 시간을 반환한다.">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content="context">
+<meta property="og:description" content="context 패키지는 Go 개발을 하다 보면 심심치 않게 만날 수 있다. 패키지의 공식문서에 따르면, 이 패키지의 주된 목표는 데드라인, 취소 신호 및 기타 요청 범위 값을 API 경계와 프로세스들 사이에 전달하는 컨텍스트 유형을 만들기 위해 사용한다.
+ Context 타입 #  Context 타입은 다섯 가지의 메소드를 가지고 있는 인터페이스이다. Deadline, Err, Value, Done이 있다.
+type Context interface { Deadline() (deadline time.Time, ok bool) Done() <-chan struct{} Err() error Value(key interface{}) interface{} } Deadline #  컨텍스트를 대신해 수행된 작업을 취소해야 하는 시간을 반환한다.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/libraries/context/"><meta property="article:section" content="libraries">
+<meta property="article:modified_time" content="2021-09-29T22:21:50+09:00">
+<title>context | Dive into Go</title>
+<link rel=manifest href=/dive-into-go/manifest.json>
+<link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
+<script defer src=/dive-into-go/flexsearch.min.js></script>
+<script defer src=/dive-into-go/en.search.min.67246ed85c893e582286034a1fef23b3848de683b7fa16954313c27f79b2d0f6.js integrity="sha256-ZyRu2FyJPlgihgNKH+8js4SN5oO3+haVQxPCf3my0PY=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/dive-into-go/><img src=/dive-into-go/logo.png alt=Logo><span>Dive into Go</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<p>
+<a href=/dive-into-go/basic/>Basic</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/basic/package/>Package</a></li>
+<li>
+<a href=/dive-into-go/basic/module/>Module</a></li>
+</ul>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/insides/>Insides</a></p>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/libraries/>Libraries</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/libraries/log/>log</a></li>
+<li>
+<a href=/dive-into-go/libraries/context/ class=active>context</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://github.com/changhoi/dive-into-go target=_blank rel=noopener>
+Github
+</a>
+</li>
+</ul>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
+</label>
+<strong>context</strong>
+<label for=toc-control>
+<img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#context-타입><code>Context</code> 타입</a>
+<ul>
+<li><a href=#deadline><code>Deadline</code></a></li>
+<li><a href=#done><code>Done</code></a></li>
+<li><a href=#err><code>Err</code></a></li>
+<li><a href=#value><code>Value</code></a></li>
+</ul>
+</li>
+<li><a href=#빈-context-만들기>빈 <code>Context</code> 만들기</a>
+<ul>
+<li><a href=#background><code>Background()</code></a></li>
+<li><a href=#todo><code>TODO()</code></a></li>
+</ul>
+</li>
+<li><a href=#withcancel>WithCancel</a></li>
+<li><a href=#withdeadline>WithDeadline</a></li>
+<li><a href=#withtimeout>WithTimeout</a></li>
+<li><a href=#withvalue>WithValue</a></li>
+<li><a href=#더-실용적인-예시들>더 실용적인 예시들</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown><p><code>context</code> 패키지는 Go 개발을 하다 보면 심심치 않게 만날 수 있다. 패키지의 공식문서에 따르면, 이 패키지의 주된 목표는 데드라인, 취소 신호 및 기타 요청 범위 값을 API 경계와 프로세스들 사이에 전달하는 컨텍스트 유형을 만들기 위해 사용한다.</p>
+<hr>
+<h2 id=context-타입>
+<code>Context</code> 타입
+<a class=anchor href=#context-%ed%83%80%ec%9e%85>#</a>
+</h2>
+<p><code>Context</code> 타입은 다섯 가지의 메소드를 가지고 있는 인터페이스이다. <code>Deadline</code>, <code>Err</code>, <code>Value</code>, <code>Done</code>이 있다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Context</span> <span style=color:#66d9ef>interface</span> {
+	<span style=color:#a6e22e>Deadline</span>() (<span style=color:#a6e22e>deadline</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span>, <span style=color:#a6e22e>ok</span> <span style=color:#66d9ef>bool</span>)
+	<span style=color:#a6e22e>Done</span>() <span style=color:#f92672>&lt;-</span><span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>struct</span>{}
+	<span style=color:#a6e22e>Err</span>() <span style=color:#66d9ef>error</span>
+	<span style=color:#a6e22e>Value</span>(<span style=color:#a6e22e>key</span> <span style=color:#66d9ef>interface</span>{}) <span style=color:#66d9ef>interface</span>{}
+}
+</code></pre></div><h3 id=deadline>
+<code>Deadline</code>
+<a class=anchor href=#deadline>#</a>
+</h3>
+<p>컨텍스트를 대신해 수행된 작업을 취소해야 하는 시간을 반환한다. 데드라인은 설정되지 않으면 <code>ok</code>에 <code>false</code>담아 값을 반환한다.</p>
+<h3 id=done>
+<code>Done</code>
+<a class=anchor href=#done>#</a>
+</h3>
+<p>이 함수는 <code>Context</code>가 취소되었거나, 타임아웃이 발생하면 닫힌 수신용 채널을 리턴한다. 만약 이 <code>Context</code>가 취소될 수가 없는 것이라면, <code>nil</code>을 반환한다.</p>
+<h3 id=err>
+<code>Err</code>
+<a class=anchor href=#err>#</a>
+</h3>
+<p><code>Done</code>이 아직 닫히지 않았다면, 이 함수는 <code>nil</code>을 반환한다. 만약 <code>Done</code>이 닫혀있다면, <code>Err</code>은 이유가 담긴 에러를 리턴한다. 만약 캔슬이 호출되었다면, <code>Canceled</code> 에러를 리턴하고, 데드라인이 지났다면, <code>DeadlineExceeded</code> 에러를 반환한다.</p>
+<h3 id=value>
+<code>Value</code>
+<a class=anchor href=#value>#</a>
+</h3>
+<p>해당 <code>Context</code>와 연관된 <code>key</code>에 대한 값을 리턴하거나, 어떠한 값도 이 키와 연관이 없는 경우 <code>nil</code>을 리턴한다.</p>
+<p><code>Context</code> 타입을 사용해야 한다면, 직접 구현하기 보다는 <code>WithCancel</code>, <code>WithDeadline</code>, <code>WithTimeout</code> 같은 함수들을 사용해 만들 수 있다.</p>
+<hr>
+<p><code>WithCancel</code>, <code>WithDeadline</code>, <code>WithTimeout</code> 함수들은 <code>Context</code>를 받아서 각 이름에 맞게 설정된 새로운 자식 <code>Context</code>와 <code>CancelFunc</code> 형태의 함수를 내보낸다. <code>CallFunc</code>은 호출되면 해당 컨텍스트와 그 자식들을 취소 시키고, 컨텍스트의 부모가 해당 컨텍스트를 참조하고 있던 레퍼런스를 삭제한다. 그리고 연관된 타이머들을 모두 정지시킨다. <code>CallFunc</code>를 호출하는 것에 실패하면 부모가 취소되기 전까지 메모리 릭이 발생하는 것과 같다.</p>
+<h2 id=빈-context-만들기>
+빈 <code>Context</code> 만들기
+<a class=anchor href=#%eb%b9%88-context-%eb%a7%8c%eb%93%a4%ea%b8%b0>#</a>
+</h2>
+<p>비어있는 <code>Context</code>라는 말은, 절대 취소되지도 않고, 값고 없고, 데드라인도 없는 <code>Context</code>라는 뜻이다. 이런 빈 <code>Context</code>는 다음 두 가지 함수로 만들 수 있다.</p>
+<h3 id=background>
+<code>Background()</code>
+<a class=anchor href=#background>#</a>
+</h3>
+<p>빈 <code>Context</code>를 리턴한다. 일반적으로 메인 함수, 초기화, 테스트 과정 그리고 들어오는 요청들에 대한 루트 <code>Context</code>로 자주 사용된다.</p>
+<h3 id=todo>
+<code>TODO()</code>
+<a class=anchor href=#todo>#</a>
+</h3>
+<p>어떤 <code>Context</code>를 사용할지 모르겠거나, 명확하지 않다면 이 함수를 사용해 빈 <code>Context</code>를 만든다.</p>
+<h2 id=withcancel>
+WithCancel
+<a class=anchor href=#withcancel>#</a>
+</h2>
+<p>부모가 되는 <code>Context</code>를 인자로 받아 새로운 <code>Done</code> 채널과 함께 복사 한 값을 리턴한다. 반환된 <code>Context</code>의 <code>Done</code> 채널은 반환된 취소 함수가 호출되거나 부모의 <code>Done</code> 채널이 막히면 같이 막히게 된다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;context&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+	<span style=color:#e6db74>&#34;os&#34;</span>
+	<span style=color:#e6db74>&#34;path/filepath&#34;</span>
+	<span style=color:#e6db74>&#34;strconv&#34;</span>
+	<span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
+	<span style=color:#a6e22e>parent</span>, <span style=color:#a6e22e>parentCancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithCancel</span>(<span style=color:#a6e22e>ctx</span>)
+	<span style=color:#a6e22e>child</span>, <span style=color:#a6e22e>childCancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithCancel</span>(<span style=color:#a6e22e>parent</span>)
+
+	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>) <span style=color:#f92672>!=</span> <span style=color:#ae81ff>3</span> {
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;usage: %s &lt;parent delay&gt; &lt;child delay&gt;\n&#34;</span>, <span style=color:#a6e22e>filepath</span>.<span style=color:#a6e22e>Base</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>0</span>]))
+		<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Exit</span>(<span style=color:#ae81ff>1</span>)
+	}
+
+	<span style=color:#a6e22e>parentDelay</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>strconv</span>.<span style=color:#a6e22e>Atoi</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>1</span>])
+	<span style=color:#a6e22e>childDelay</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>strconv</span>.<span style=color:#a6e22e>Atoi</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>2</span>])
+
+	<span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
+		<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(<span style=color:#a6e22e>parentDelay</span>) <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+		<span style=color:#a6e22e>parentCancel</span>()
+	}()
+
+	<span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
+		<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(<span style=color:#a6e22e>childDelay</span>) <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+		<span style=color:#a6e22e>childCancel</span>()
+	}()
+
+	<span style=color:#66d9ef>select</span> {
+	<span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>child</span>.<span style=color:#a6e22e>Done</span>():
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Child closed!:&#34;</span>, <span style=color:#a6e22e>child</span>.<span style=color:#a6e22e>Err</span>())
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Parent not closed!:&#34;</span>, <span style=color:#a6e22e>parent</span>.<span style=color:#a6e22e>Err</span>())
+	<span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>parent</span>.<span style=color:#a6e22e>Done</span>():
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Parent closed!:&#34;</span>, <span style=color:#a6e22e>parent</span>.<span style=color:#a6e22e>Err</span>())
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Child closed!:&#34;</span>, <span style=color:#a6e22e>child</span>.<span style=color:#a6e22e>Err</span>())
+	}
+}
+</code></pre></div>
+<div class=book-expand>
+<label>
+<div class="book-expand-head flex justify-between">
+<span>결과</span>
+<span>↕</span>
+</div>
+<input type=checkbox class=hidden>
+<div class="book-expand-content markdown-inner">
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ go run withCancel.go <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span>
+Parent closed!: context canceled
+Child closed!: context canceled
+
+$ go run withCancel.go <span style=color:#ae81ff>2</span> <span style=color:#ae81ff>1</span>
+Child closed!: context canceled
+Parent not closed!: &lt;nil&gt;
+</code></pre></div>
+</div>
+</label>
+</div>
+<p>위 예시에서처럼 부모가 닫히면 자동으로 자식의 <code>Done</code> 채널이 닫히면서 에러값을 갖게 되고, 반대는 성립하지 않는다.</p>
+<hr>
+<p>취소하는 동작은 고루틴이 릭되는 현상을 막아줄 수 있다.
+<a href=https://pkg.go.dev/context#example-WithCancel>아래는 Go 패키지에서 제공되는 예시이다.</a></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;context&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#a6e22e>gen</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>) <span style=color:#f92672>&lt;-</span><span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>int</span> {
+		<span style=color:#a6e22e>dst</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>int</span>)
+		<span style=color:#a6e22e>n</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>1</span>
+		<span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
+			<span style=color:#66d9ef>for</span> {
+				<span style=color:#66d9ef>select</span> {
+				<span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+					<span style=color:#66d9ef>return</span> <span style=color:#75715e>// 고루틴이 릭되는 것을 막기 위해 리턴
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>case</span> <span style=color:#a6e22e>dst</span> <span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>n</span>:
+					<span style=color:#a6e22e>n</span><span style=color:#f92672>++</span>
+				}
+			}
+		}()
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dst</span>
+	}
+
+	<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithCancel</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>())
+	<span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>() <span style=color:#75715e>// 정수를 하나씩 소비하는 것을 끝내면 고루틴 종료
+</span><span style=color:#75715e></span>
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>n</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>gen</span>(<span style=color:#a6e22e>ctx</span>) {
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>n</span>)
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>n</span> <span style=color:#f92672>==</span> <span style=color:#ae81ff>5</span> {
+			<span style=color:#66d9ef>break</span>
+		}
+	}
+}
+</code></pre></div>
+<div class=book-expand>
+<label>
+<div class="book-expand-head flex justify-between">
+<span>결과</span>
+<span>↕</span>
+</div>
+<input type=checkbox class=hidden>
+<div class="book-expand-content markdown-inner">
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#ae81ff>1</span>
+<span style=color:#ae81ff>2</span>
+<span style=color:#ae81ff>3</span>
+<span style=color:#ae81ff>4</span>
+<span style=color:#ae81ff>5</span>
+</code></pre></div>
+</div>
+</label>
+</div>
+<h2 id=withdeadline>
+WithDeadline
+<a class=anchor href=#withdeadline>#</a>
+</h2>
+<p>사실 Cancel에 대해 이해 했다면, 그 뒤는 비슷하다.
+이 함수는 부모 <code>Context</code>에서 데드라인을 조정해서 내보낸다. 인자 값으로 들어오는 <code>d</code> 이후를 데드라인으로 설정한다. 만약 부모 <code>Context</code>의 데드라인이 설정되어있고, <code>d</code>보다 이르다면, 부모에게 맞춘다 (어짜피 부모가 취소 되면 자식되 취소 됨). 반환된 <code>Context</code>의 <code>Done</code> 채널은 데드라인이 지나거나, <code>cancel</code> 함수를 호출하면 닫히게 된다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;context&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+	<span style=color:#e6db74>&#34;os&#34;</span>
+	<span style=color:#e6db74>&#34;path/filepath&#34;</span>
+	<span style=color:#e6db74>&#34;strconv&#34;</span>
+	<span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>) <span style=color:#f92672>!=</span> <span style=color:#ae81ff>2</span> {
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;usage %s &lt;deadline&gt;\n&#34;</span>, <span style=color:#a6e22e>filepath</span>.<span style=color:#a6e22e>Base</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>0</span>]))
+		<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Exit</span>(<span style=color:#ae81ff>1</span>)
+	}
+
+	<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>strconv</span>.<span style=color:#a6e22e>Atoi</span>(<span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Args</span>[<span style=color:#ae81ff>1</span>])
+	<span style=color:#a6e22e>deadline</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Now</span>().<span style=color:#a6e22e>Add</span>(<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(<span style=color:#a6e22e>t</span>) <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+
+	<span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
+	<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithDeadline</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>deadline</span>)
+	<span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
+		<span style=color:#66d9ef>select</span> {
+		<span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>After</span>(<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(<span style=color:#ae81ff>3</span>) <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>):
+			<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;TOO LONG DEADLINE!&#34;</span>)
+			<span style=color:#a6e22e>cancel</span>()
+		}
+	}()
+
+	<span style=color:#66d9ef>select</span> {
+	<span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;closed!:&#34;</span>, <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Err</span>())
+	}
+}
+</code></pre></div>
+<div class=book-expand>
+<label>
+<div class="book-expand-head flex justify-between">
+<span>결과</span>
+<span>↕</span>
+</div>
+<input type=checkbox class=hidden>
+<div class="book-expand-content markdown-inner">
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ go run withDeadline.go <span style=color:#ae81ff>2</span>
+closed!: context deadline exceeded
+
+$ go run withDeadline.go <span style=color:#ae81ff>4</span>
+TOO LONG DEADLINE!
+closed!: context canceled
+</code></pre></div>
+</div>
+</label>
+</div>
+<p>데드라인을 지나서 <code>Done</code>의 채널이 닫히면, <code>DeadlineExceeded</code> 에러를 보내고, <code>cancel</code> 함수를 사용해서 닫으면 <code>Canceled</code> 에러를 보낸다.</p>
+<h2 id=withtimeout>
+WithTimeout
+<a class=anchor href=#withtimeout>#</a>
+</h2>
+<p>이 함수는 데드라인 함수를 쉽게 쓰게 해준다. 인자로 들어온 <code>Duration</code>을 가지고 다음과 같이 리턴한다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>parent</span> <span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>timeout</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>) (<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>CancelFunc</span>) {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>WithDeadline</span>(<span style=color:#a6e22e>parent</span>, <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Now</span>().<span style=color:#a6e22e>Add</span>(<span style=color:#a6e22e>timeout</span>))
+}
+</code></pre></div><h2 id=withvalue>
+WithValue
+<a class=anchor href=#withvalue>#</a>
+</h2>
+<p>이 함수는 다른 함수들과 마찬가지로, 부모 <code>Context</code>를 사용하지만, 키와 값을 함께 넣어서 저장한다. <code>Context</code>에 특정 값을 저장해둘 수 있다. 이 값은 추가 인자값을 다른 함수에 전달하는 용도로 쓰지말라고 공식 문서에 설명되어있다.</p>
+<p>제공된 키는 반드시 비교가능해야 하고, 문자열이나 내장된 유형이면 안된다. 컨텍스트를 사용하는 패키지 사이에 충돌을 방지하기 위해서이다. <code>WithValue</code>를 사용하려면, 키 유형을 직접 정의해야한다.</p>
+<p>아래는
+<a href=https://pkg.go.dev/context#example-WithValue>Go 패키지에 있는 예시</a>이다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;context&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+)
+
+<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+	<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>favContextKey</span> <span style=color:#66d9ef>string</span>
+
+	<span style=color:#a6e22e>f</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>k</span> <span style=color:#a6e22e>favContextKey</span>) {
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Value</span>(<span style=color:#a6e22e>k</span>); <span style=color:#a6e22e>v</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+			<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;found value:&#34;</span>, <span style=color:#a6e22e>v</span>)
+			<span style=color:#66d9ef>return</span>
+		}
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;key not found:&#34;</span>, <span style=color:#a6e22e>k</span>)
+	}
+
+	<span style=color:#a6e22e>k</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>favContextKey</span>(<span style=color:#e6db74>&#34;language&#34;</span>)
+	<span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithValue</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>(), <span style=color:#a6e22e>k</span>, <span style=color:#e6db74>&#34;Go&#34;</span>)
+
+	<span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>k</span>)
+	<span style=color:#a6e22e>f</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>favContextKey</span>(<span style=color:#e6db74>&#34;color&#34;</span>))
+}
+</code></pre></div>
+<div class=book-expand>
+<label>
+<div class="book-expand-head flex justify-between">
+<span>결과</span>
+<span>↕</span>
+</div>
+<input type=checkbox class=hidden>
+<div class="book-expand-content markdown-inner">
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>found value: Go
+key not found: color
+</code></pre></div>
+</div>
+</label>
+</div>
+<hr>
+<h2 id=더-실용적인-예시들>
+더 실용적인 예시들
+<a class=anchor href=#%eb%8d%94-%ec%8b%a4%ec%9a%a9%ec%a0%81%ec%9d%b8-%ec%98%88%ec%8b%9c%eb%93%a4>#</a>
+</h2>
+<p>Context는 언급한 대로 API의 사이 경계 부분이라든지, 고루틴의 릭되는 것을 막기 위해 Concurrency 패턴에서 자주 등장한다. 아래 블로그 글들을 보면, <code>context</code> 패키지의 실용적 예시들을 확인할 수 있다.</p>
+<ul>
+<li>
+<a href=https://gobyexample.com/context>https://gobyexample.com/context</a></li>
+<li>
+<a href=https://go.dev/blog/context>https://go.dev/blog/context</a></li>
+</ul>
+</article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/b80c93314e519f2f611045276ff53feb467d8f84 title="Last modified by changhoi | September 29, 2021" target=_blank rel=noopener>
+<img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
+<span>September 29, 2021</span>
+</a>
+</div>
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#context-타입><code>Context</code> 타입</a>
+<ul>
+<li><a href=#deadline><code>Deadline</code></a></li>
+<li><a href=#done><code>Done</code></a></li>
+<li><a href=#err><code>Err</code></a></li>
+<li><a href=#value><code>Value</code></a></li>
+</ul>
+</li>
+<li><a href=#빈-context-만들기>빈 <code>Context</code> 만들기</a>
+<ul>
+<li><a href=#background><code>Background()</code></a></li>
+<li><a href=#todo><code>TODO()</code></a></li>
+</ul>
+</li>
+<li><a href=#withcancel>WithCancel</a></li>
+<li><a href=#withdeadline>WithDeadline</a></li>
+<li><a href=#withtimeout>WithTimeout</a></li>
+<li><a href=#withvalue>WithValue</a></li>
+<li><a href=#더-실용적인-예시들>더 실용적인 예시들</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>
