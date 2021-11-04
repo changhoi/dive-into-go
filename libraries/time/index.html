@@ -1,0 +1,158 @@
+<!doctype html><html lang=en dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="time 패키지는 시간을 측정하거나 보여주기 위해 사용한다. 깊은 구현 방식까지 탐구하고자 했으나, 아주 복잡한 wall clock, monotonic clock에 대해 깔끔하게 정리할 수 있는 재주가 없어서 우선 실용적인 레벨에서 사용 방법을 정리해봤다.
+ type Time #  Time은 나노초 정밀도로 한 순간을 표현한다.
+type Time struct { wall uint64 ext int64 loc *Location } wall값과 ext 값은 위에서 잠깐 언급한 wall clock의 초 단위, 나노초 단위로 변환하는 데 사용되고 선택적으로 monotonic clock을 나노초 단위에서 읽기 위해 사용된다.">
+<meta name=theme-color content="#FFFFFF"><meta property="og:title" content>
+<meta property="og:description" content="time 패키지는 시간을 측정하거나 보여주기 위해 사용한다. 깊은 구현 방식까지 탐구하고자 했으나, 아주 복잡한 wall clock, monotonic clock에 대해 깔끔하게 정리할 수 있는 재주가 없어서 우선 실용적인 레벨에서 사용 방법을 정리해봤다.
+ type Time #  Time은 나노초 정밀도로 한 순간을 표현한다.
+type Time struct { wall uint64 ext int64 loc *Location } wall값과 ext 값은 위에서 잠깐 언급한 wall clock의 초 단위, 나노초 단위로 변환하는 데 사용되고 선택적으로 monotonic clock을 나노초 단위에서 읽기 위해 사용된다.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://changhoi.github.io/dive-into-go/libraries/time/"><meta property="article:section" content="libraries">
+<meta property="article:modified_time" content="2021-11-04T14:44:51+09:00">
+<title>Time | Dive into Go</title>
+<link rel=manifest href=/dive-into-go/manifest.json>
+<link rel=icon href=/dive-into-go/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/dive-into-go/book.min.46181bc93375ba932026e753b37c40e6ff8bb16a9ef770c78bcc663e4577b1ba.css integrity="sha256-RhgbyTN1upMgJudTs3xA5v+LsWqe93DHi8xmPkV3sbo=" crossorigin=anonymous>
+<script defer src=/dive-into-go/flexsearch.min.js></script>
+<script defer src=/dive-into-go/en.search.min.f6183b1ffcb358fc4205a35e1fb11c575851f90e39ec556caacf3b7889fe84ec.js integrity="sha256-9hg7H/yzWPxCBaNeH7EcV1hR+Q457FVsqs87eIn+hOw=" crossorigin=anonymous></script>
+<script defer src=/dive-into-go/sw.min.60b3febe1cfe2ef0ba434075e748989e1c1847ee656e8cd2cc6afbfa3b335093.js integrity="sha256-YLP+vhz+LvC6Q0B150iYnhwYR+5lbozSzGr7+jszUJM=" crossorigin=anonymous></script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-149480446-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/dive-into-go/><img src=/dive-into-go/logo.png alt=Logo><span>Dive into Go</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<p>
+<a href=/dive-into-go/basic/>Basic</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/basic/channel/>Channel</a></li>
+<li>
+<a href=/dive-into-go/basic/package/>Package</a></li>
+<li>
+<a href=/dive-into-go/basic/module/>Module</a></li>
+</ul>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/insides/>Insides</a></p>
+</li>
+<li>
+<p>
+<a href=/dive-into-go/libraries/>Libraries</a></p>
+<ul>
+<li>
+<a href=/dive-into-go/libraries/log/>log</a></li>
+<li>
+<a href=/dive-into-go/libraries/context/>context</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://github.com/changhoi/dive-into-go target=_blank rel=noopener>
+Github
+</a>
+</li>
+</ul>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/dive-into-go/svg/menu.svg class=book-icon alt=Menu>
+</label>
+<strong>Time</strong>
+<label for=toc-control>
+<img src=/dive-into-go/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#type-time><code>type Time</code></a></li>
+<li><a href=#timenow><code>time.Now</code></a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown><p><code>time</code> 패키지는 시간을 측정하거나 보여주기 위해 사용한다. 깊은 구현 방식까지 탐구하고자 했으나, 아주 복잡한 <code>wall clock</code>, <code>monotonic clock</code>에 대해 깔끔하게 정리할 수 있는 재주가 없어서 우선 실용적인 레벨에서 사용 방법을 정리해봤다.</p>
+<hr>
+<h2 id=type-time>
+<code>type Time</code>
+<a class=anchor href=#type-time>#</a>
+</h2>
+<p><code>Time</code>은 나노초 정밀도로 한 순간을 표현한다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Time</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>wall</span> <span style=color:#66d9ef>uint64</span>
+	<span style=color:#a6e22e>ext</span>  <span style=color:#66d9ef>int64</span>
+	<span style=color:#a6e22e>loc</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Location</span>
+}
+</code></pre></div><p><code>wall</code>값과 <code>ext</code> 값은 위에서 잠깐 언급한 <code>wall clock</code>의 초 단위, 나노초 단위로 변환하는 데 사용되고 선택적으로 <code>monotonic clock</code>을 나노초 단위에서 읽기 위해 사용된다. <code>loc</code> 값은 지역을 특정하기 위해 사용한다. <code>Location</code>이라고 하는 타입의 포인터 값을 갖는다. 만약 이 값이 <code>nil</code>이라면, <code>UTC</code>임을 의미한다.</p>
+<blockquote>
+<p>UTC는 협정 세계시를 의미하고 뉴질랜드 웰링턴을 <strong>종점</strong>으로 하는 기준시이다. 영국을 기준시로 하는 GMT와 유사하지만, 초의 소숫점에서 차이가 있어서 기술적 영역에서는 UTC를 사용한다고 한다.</p>
+</blockquote>
+<blockquote>
+<p>간단히 말해서, <code>wall clock</code>은 시각과 관련된 정보이다. <code>monotonic clock</code>은 시간과 관련된 정보이다.</p>
+</blockquote>
+<h2 id=timenow>
+<code>time.Now</code>
+<a class=anchor href=#timenow>#</a>
+</h2>
+<p><code>time.Now</code> 함수로 현재 로컬 시간을 만들수 있다.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>t</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span> = <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Now</span>()
+</code></pre></div></article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+<div><a class="flex align-center" href=https://github.com/changhoi/dive-into-go/commit/3a4832de8037226aee70cb4d3868fd325833d723 title="Last modified by changhoi | November 4, 2021" target=_blank rel=noopener>
+<img src=/dive-into-go/svg/calendar.svg class=book-icon alt=Calendar>
+<span>November 4, 2021</span>
+</a>
+</div>
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#type-time><code>type Time</code></a></li>
+<li><a href=#timenow><code>time.Now</code></a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>
