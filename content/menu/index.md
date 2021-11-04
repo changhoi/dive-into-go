@@ -3,6 +3,7 @@ headless = true
 +++
 
 - [Basic]({{< relref "/basic" >}})
+  - [Channel]({{< relref "/basic/channel" >}}) 
   - [Package]({{< relref "/basic/package" >}})
   - [Module]({{< relref "/basic/module" >}})
 - [Insides]({{< relref "/insides" >}})

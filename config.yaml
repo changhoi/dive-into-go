@@ -9,6 +9,8 @@ languageCode: "ko-kr"
 disablePathToLower: true
 enableGitInfo: true
 
+googleAnalytics: "UA-149480446-1"
+
 # Needed for mermaid/katex shortcodes
 markup:
   goldmark:

@@ -1,4 +1,4 @@
-## Dive into Go
+## Dive into Go (WIP)
 
 Git book: <https://changhoi.github.io/dive-into-go>
 
